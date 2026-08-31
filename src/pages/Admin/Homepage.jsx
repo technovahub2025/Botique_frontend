@@ -127,6 +127,7 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
 
   const addSlide = () => {
     const newSlides = [...slides, {
+      id: crypto.randomUUID(),
       imageUrl: '',
       smallLabel: '',
       heading: data.heading || globalDefaults.heading || '',
@@ -184,7 +185,7 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
 
           return (
             <div
-              key={idx}
+              key={slide.id || idx}
               className={`border border-gray-200 rounded-lg p-4 transition-all duration-200 ${
                 enabled ? 'border-gold/30' : 'opacity-60'
               }`}

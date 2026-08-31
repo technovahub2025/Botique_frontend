@@ -7,7 +7,6 @@ import { getImageUrl } from '../../services/imageUrl';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1512436955456-8a671a6b0e4c?auto=format&fit=crop&w=1920&h=700&q=50';
-const DEFAULT_ASPECT_RATIO = 21 / 9;
 const AUTO_PLAY_DELAY = 5500;
 
 const isValidImageUrl = (url) => {
@@ -21,34 +20,32 @@ const isValidImageUrl = (url) => {
   }
 };
 
-const normalizeSlide = (slide, index, globalHero) => ({
-  imageUrl: typeof slide === 'string' ? slide : slide.imageUrl || slide.image || '',
-  smallLabel: typeof slide === 'string' ? '' : slide.smallLabel || '',
-  heading: typeof slide === 'string' ? globalHero.heading : slide.heading || globalHero.heading,
-  description:
-    typeof slide === 'string' ? globalHero.description : slide.description || globalHero.description,
-  buttonText: typeof slide === 'string' ? '' : slide.buttonText || globalHero.buttonText || 'Discover Collection',
-  buttonLink: typeof slide === 'string' ? '' : slide.buttonLink || globalHero.buttonLink || '/',
-  order: typeof slide === 'string' ? index + 1 : slide.order || index + 1,
-  isActive:
-    typeof slide === 'string'
-      ? true
-      : slide.isActive !== undefined
+const normalizeSlide = (slide, index, globalHero) => {
+  const isObj = slide && typeof slide === 'object';
+  const isActive = isObj
+    ? slide.isActive !== undefined
       ? slide.isActive
       : slide.enabled !== undefined
-      ? slide.enabled
-      : true,
-  enabled:
-    typeof slide === 'string'
-      ? true
-      : typeof slide.isActive === 'boolean'
-      ? slide.isActive
-      : slide.enabled !== undefined
-      ? slide.enabled
-      : true,
-});
-
-const getAutoPosition = (ratio) => (ratio && ratio < 0.85 ? '50% 35%' : 'center center');
+        ? slide.enabled
+        : true
+    : true;
+  return {
+    id: (isObj && (slide.id || slide._id)) || `slide-${index}`,
+    imageUrl: isObj ? (slide.imageUrl || slide.image || '') : slide,
+    smallLabel: isObj ? (slide.smallLabel || '') : '',
+    heading: isObj ? (slide.heading || globalHero.heading) : globalHero.heading,
+    description: isObj ? (slide.description || globalHero.description) : globalHero.description,
+    buttonText: isObj
+      ? (slide.buttonText || globalHero.buttonText || 'Discover Collection')
+      : (globalHero.buttonText || 'Discover Collection'),
+    buttonLink: isObj
+      ? (slide.buttonLink || globalHero.buttonLink || '/')
+      : (globalHero.buttonLink || '/'),
+    order: isObj ? (slide.order || index + 1) : index + 1,
+    isActive,
+    enabled: isActive,
+  };
+};
 
 const Hero = () => {
   const { getSection } = useHomepageSettings();
@@ -60,13 +57,14 @@ const Hero = () => {
       description:
         heroSection.description ||
         'Discover award-winning handloom collections where traditional Indian craftsmanship meets contemporary design.',
-      buttonText: heroSection.buttonText || 'Discover Collection',
-      buttonLink: heroSection.buttonLink || '/collections',
+      buttonText: heroSection.ctaText || 'Discover Collection',
+      buttonLink: heroSection.ctaLink || '/collections',
     }),
     [heroSection]
   );
 
   const rawSlides = heroSection.heroImages;
+
   const validSlides = useMemo(
     () =>
       (Array.isArray(rawSlides) ? rawSlides : [])
@@ -75,40 +73,17 @@ const Hero = () => {
     [rawSlides, globalHero]
   );
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [loadedImages, setLoadedImages] = useState(new Set());
-  const [aspectRatios, setAspectRatios] = useState({});
-  const [failedImages, setFailedImages] = useState(new Set());
-  const slideTransitionRef = useRef(null);
-  const navResetRef = useRef(false);
-
   const slides = useMemo(
     () => (validSlides.length ? validSlides : [normalizeSlide(FALLBACK_IMAGE, 0, globalHero)]),
     [validSlides, globalHero]
   );
 
-  const loadImg = (src) =>
-    new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(img.naturalWidth / img.naturalHeight || DEFAULT_ASPECT_RATIO);
-      img.onerror = () => resolve(null);
-      img.src = src;
-    });
-
-  useEffect(() => {
-    let cancelled = false;
-      slides.forEach((s, i) => {
-          loadImg(getImageUrl(s.imageUrl)).then((ratio) => {
-          if (cancelled) return;
-          setLoadedImages((l) => new Set(l).add(i));
-          if (ratio) setAspectRatios((m) => ({ ...m, [i]: ratio }));
-        });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [slides]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [loadedImages, setLoadedImages] = useState(new Set());
+  const [failedImages, setFailedImages] = useState(new Set());
+  const slideTransitionRef = useRef(null);
+  const navResetRef = useRef(false);
 
   const goNext = () => {
     setActiveIndex((i) => (i + 1) % slides.length);
@@ -151,31 +126,25 @@ const Hero = () => {
 
         {slides.map((slide, i) => {
           const isActive = i === safeIndex;
-          const loaded = loadedImages.has(i);
-          const imgSrc = failedImages.has(i) ? FALLBACK_IMAGE : getImageUrl(slide.imageUrl);
-          const objectPosition = getAutoPosition(aspectRatios[i]);
+          const loaded = loadedImages.has(slide.id);
+          const failed = failedImages.has(slide.id);
+          const imgSrc = failed ? FALLBACK_IMAGE : getImageUrl(slide.imageUrl);
           return (
             <div
-              key={`slide-${i}`}
-              className={`absolute inset-0 w-full h-full overflow-hidden ${isActive ? 'z-10' : 'z-0'}`}
+              key={slide.id}
+              className={`absolute inset-0 w-full h-full overflow-hidden ${
+                isActive ? 'z-10' : 'z-0'
+              }`}
             >
               <img
                 src={imgSrc}
                 alt={slide.heading || slide.smallLabel || 'Hero banner'}
                 loading="eager"
                 decoding="async"
-                onLoad={() => {
-                  setLoadedImages((l) => new Set(l).add(i));
-                  loadImg(imgSrc).then((r) => {
-                    if (r) setAspectRatios((m) => ({ ...m, [i]: r }));
-                  });
-                }}
-                onError={() => {
-                  setFailedImages((f) => new Set(f).add(i));
-                }}
-                className="absolute inset-0 w-full h-full object-cover"
+                onLoad={() => setLoadedImages((l) => new Set(l).add(slide.id))}
+                onError={() => setFailedImages((f) => new Set(f).add(slide.id))}
+                className="absolute inset-0 w-full h-full object-cover object-center"
                 style={{
-                  objectPosition,
                   opacity: isActive && loaded ? 1 : 0,
                   transition: isActive && loaded ? 'opacity 400ms ease-out' : 'none',
                   pointerEvents: 'none',
@@ -218,9 +187,9 @@ const Hero = () => {
       </div>
 
       <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full">
-        {slides.map((_, i) => (
+        {slides.map((slide, i) => (
           <button
-            key={i}
+            key={slide.id}
             type="button"
             aria-label={`Go to slide ${i + 1}`}
             onClick={() => {
