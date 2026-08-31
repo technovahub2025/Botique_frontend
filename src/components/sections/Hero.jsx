@@ -158,6 +158,10 @@ const Hero = () => {
           const imgSrc = failed ? FALLBACK_IMAGE : getImageUrl(slide.imageUrl);
           const strategy = getFitStrategy(slide);
           const fitClass = strategy === 'cover' ? 'object-cover' : 'object-contain';
+
+          if (import.meta.env.DEV) {
+            console.debug(`[Hero] slide=${slide.id} index=${i} strategy=${strategy} src=${imgSrc}`);
+          }
           return (
             <div
               key={slide.id}

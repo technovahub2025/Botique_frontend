@@ -96,12 +96,15 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   const slides = Array.isArray(data.heroImages) ? data.heroImages : [];
 
   const updateSlide = (slideIndex, field, value) => {
-    const newSlides = [...slides];
-    if (!newSlides[slideIndex] || typeof newSlides[slideIndex] !== 'object') {
-      newSlides[slideIndex] = {};
-    }
-    newSlides[slideIndex] = { ...newSlides[slideIndex], [field]: value };
-    onChange('heroImages', newSlides);
+    onChange('heroImages', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      const newSlides = [...current];
+      if (!newSlides[slideIndex] || typeof newSlides[slideIndex] !== 'object') {
+        newSlides[slideIndex] = {};
+      }
+      newSlides[slideIndex] = { ...newSlides[slideIndex], [field]: value };
+      return newSlides;
+    });
   };
 
   const uploadImage = async (slideIndex, file) => {
@@ -126,28 +129,35 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   };
 
   const addSlide = () => {
-    const newSlides = [...slides, {
-      id: crypto.randomUUID(),
-      imageUrl: '',
-      smallLabel: '',
-      heading: data.heading || globalDefaults.heading || '',
-      description: data.description || globalDefaults.description || '',
-      buttonText: data.ctaText || globalDefaults.ctaText || '',
-      buttonLink: data.ctaLink || globalDefaults.ctaLink || '/shop',
-      isActive: true,
-      enabled: true,
-      order: slides.length + 1,
-    }];
-    onChange('heroImages', newSlides);
+    onChange('heroImages', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      return [
+        ...current,
+        {
+          id: crypto.randomUUID(),
+          imageUrl: '',
+          smallLabel: '',
+          heading: data.heading || globalDefaults.heading || '',
+          description: data.description || globalDefaults.description || '',
+          buttonText: data.ctaText || globalDefaults.ctaText || '',
+          buttonLink: data.ctaLink || globalDefaults.ctaLink || '/shop',
+          isActive: true,
+          enabled: true,
+          order: current.length + 1,
+        },
+      ];
+    });
     setExpandedSlides((prev) => ({ ...prev, [slides.length]: true }));
   };
 
   const removeSlide = (idx) => {
-    const newSlides = slides
-      .map((s, i) => (i === idx ? null : s))
-      .filter(Boolean)
-      .map((s, i) => ({ ...s, order: i + 1 }));
-    onChange('heroImages', newSlides);
+    onChange('heroImages', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      return current
+        .map((s, i) => (i === idx ? null : s))
+        .filter(Boolean)
+        .map((s, i) => ({ ...s, order: i + 1 }));
+    });
     setExpandedSlides((prev) => {
       const next = { ...prev };
       delete next[idx];
@@ -156,12 +166,17 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   };
 
   const moveSlide = (from, to) => {
-    if (to < 0 || to >= slides.length) return;
-    const newSlides = [...slides];
-    const [removed] = newSlides.splice(from, 1);
-    newSlides.splice(to, 0, removed);
-    newSlides.forEach((s, i) => { s.order = i + 1; });
-    onChange('heroImages', newSlides);
+    onChange('heroImages', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      if (to < 0 || to >= current.length) return prev;
+      const newSlides = [...current];
+      const [removed] = newSlides.splice(from, 1);
+      newSlides.splice(to, 0, removed);
+      newSlides.forEach((s, i) => {
+        s.order = i + 1;
+      });
+      return newSlides;
+    });
   };
 
   return (
@@ -431,13 +446,9 @@ const Homepage = () => {
     setSections((prev) =>
       prev.map((s) => {
         if (s.key === sectionId) {
-          return {
-            ...s,
-            data: {
-              ...(s.data || {}),
-              [fieldKey]: value,
-            },
-          };
+          const currentData = s.data || {};
+          const nextValue = typeof value === 'function' ? value(currentData[fieldKey]) : value;
+          return { ...s, data: { ...currentData, [fieldKey]: nextValue } };
         }
         return s;
       })
