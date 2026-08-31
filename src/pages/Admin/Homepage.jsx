@@ -483,6 +483,11 @@ const Homepage = () => {
 
   const handleSave = async () => {
     const allSections = ensureAllSections();
+    const heroSection = allSections.find((s) => s.key === 'hero');
+    console.log(
+      '[Admin] before save heroImages:',
+      heroSection?.data?.heroImages?.map((s) => s.imageUrl)
+    );
     setSaving(true);
     setError('');
     setSuccess('');
