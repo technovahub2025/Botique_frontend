@@ -35,9 +35,8 @@ const AdminLayout = () => {
     { to: '/admin/collections', label: 'Collections', icon: Layers },
     { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { to: '/admin/customers', label: 'Customers', icon: Users },
-    { to: '/admin/inventory', label: 'Inventory', icon: Box },
-    { to: '/admin/coupons', label: 'Coupons', icon: Ticket },
-    { to: '/admin/reviews', label: 'Reviews', icon: FileText },
+
+  
     { to: '/admin/homepage', label: 'Homepage', icon: Home },
     { to: '/admin/settings', label: 'Settings', icon: Settings },
   ];

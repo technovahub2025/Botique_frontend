@@ -92,9 +92,7 @@ function App() {
                     <Route path="/admin/collections" element={<AdminCollections />} />
                     <Route path="/admin/orders" element={<AdminOrders />} />
                     <Route path="/admin/customers" element={<Customers />} />
-                    <Route path="/admin/inventory" element={<Inventory />} />
-                    <Route path="/admin/coupons" element={<Coupons />} />
-                    <Route path="/admin/reviews" element={<Reviews />} />
+                  
                     <Route path="/admin/homepage" element={<Homepage />} />
                     <Route path="/admin/settings" element={<Settings />} />
                   </Route>
