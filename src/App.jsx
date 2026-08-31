@@ -15,9 +15,7 @@ import AdminCategories from './pages/Admin/Categories';
 import AdminCollections from './pages/Admin/Collections';
 import AdminOrders from './pages/Admin/Orders';
 import Customers from './pages/Admin/Customers';
-import Inventory from './pages/Admin/Inventory';
-import Coupons from './pages/Admin/Coupons';
-import Reviews from './pages/Admin/Reviews';
+
 import Homepage from './pages/Admin/Homepage';
 import Settings from './pages/Admin/Settings';
 import AccountLayout from './layouts/AccountLayout';
