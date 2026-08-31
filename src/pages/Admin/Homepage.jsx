@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { getImageUrl } from '../../services/imageUrl';
 
 const SECTIONS = [
   {
@@ -366,7 +367,7 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
               {imageUrl && (isOpen || enabled) && (
                 <div className="mt-3">
                   <img
-                    src={imageUrl}
+                    src={getImageUrl(imageUrl)}
                     alt={`Slide ${idx + 1} preview`}
                      className="w-full h-32 object-contain object-center border border-gray-200 rounded"
                     onError={(e) => {

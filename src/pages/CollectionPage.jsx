@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../services/api';
 import ShopView from '../components/sections/ShopView';
+import { getImageUrl } from '../services/imageUrl';
 
 const CollectionPage = () => {
   const { slug } = useParams();
@@ -34,10 +35,11 @@ const CollectionPage = () => {
         <div
           className="h-48 md:h-64 bg-cover bg-center flex items-center justify-center text-ivory"
           style={{
-            backgroundImage:
-              "url('" +
-              (collection.heroImage || collection.bannerImage || 'https://placehold.co/1200x400/f8f4ec/999') +
-              "')",
+            backgroundImage: (() => {
+              const raw = collection.heroImage || collection.bannerImage;
+              const src = raw ? getImageUrl(raw) : 'https://placehold.co/1200x400/f8f4ec/999';
+              return `url('${src}')`;
+            })(),
           }}
         >
           <h1 className="font-heading text-3xl md:text-4xl text-center">

@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import Button from '../ui/Button';
 import SectionHeading from '../ui/SectionHeading';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
+import { getImageUrl } from '../../services/imageUrl';
 import api from '../../services/api';
 
 const FeaturedCollection = () => {
@@ -40,7 +41,10 @@ const FeaturedCollection = () => {
 
   const title = featured.title || collection?.name || 'The Monsoon Reverie';
   const subtitle = featured.subtitle || "Editor's selection";
-  const imageUrl = collection?.heroImage || collection?.bannerImage || 'https://images.unsplash.com/photo-1612817153549-8885942493a7?auto=format&fit=crop&w=1920&q=80';
+  const rawImage = collection?.heroImage || collection?.bannerImage;
+  const imageUrl = rawImage
+    ? getImageUrl(rawImage)
+    : 'https://images.unsplash.com/photo-1612817153549-8885942493a7?auto=format&fit=crop&w=1920&q=80';
   const description = collection?.description || "A capsule collection of hand-block printed silhouettes in earthy indigos and muted golds, inspired by the monsoon season. Each piece is crafted by artisan cooperatives in Rajasthan.";
   const buttonText = featured.ctaText || 'Explore the Edit';
   const ctaLink = featured.ctaLink || `/shop${collection?.slug ? `?collection=${collection.slug}` : ''}`;

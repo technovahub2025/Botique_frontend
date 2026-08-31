@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../../services/imageUrl';
 
 const CategoryCard = ({ category, imageSize = 'square' }) => {
-  const imageSrc =
-    category.image || 'https://placehold.co/600x600/eee/999?text=No+Image';
+  const imageSrc = category.image
+    ? getImageUrl(category.image)
+    : 'https://placehold.co/600x600/eee/999?text=No+Image';
 
   return (
     <Link to={`/shop?category=${category.slug}`} className="group block">

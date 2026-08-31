@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import SectionHeading from '../ui/SectionHeading';
 import Button from '../ui/Button';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
+import { getImageUrl } from '../../services/imageUrl';
 
 const DEFAULT_CRAFTSMANSHIP = {
   title: 'The Art Of Timeless Making',
@@ -44,7 +45,7 @@ const Craftsmanship = () => {
             <div className="relative overflow-hidden">
               <div className="aspect-[3/4] overflow-hidden bg-cream">
                 <img
-                  src={craft.imageUrl}
+                  src={getImageUrl(craft.imageUrl)}
                   alt="Artisan at work"
                   loading="lazy"
                   className="w-full h-full object-cover object-center"

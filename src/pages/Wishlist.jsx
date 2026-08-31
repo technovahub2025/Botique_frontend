@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Trash2, Heart } from 'lucide-react';
 import { useWishlist } from '../hooks/useWishlist';
 import { formatPrice, getEffectivePrice, calculateDiscount } from '../utils';
+import { getImageUrl } from '../services/imageUrl';
 
 const Wishlist = () => {
   const { items, removeItem, toggleWishlist, moveToCart, clearWishlist } = useWishlist();
@@ -49,7 +50,7 @@ const Wishlist = () => {
           const discount = calculateDiscount(product.price, product.salePrice);
           const imageSrc =
             product.images && product.images.length > 0
-              ? product.images[0]
+              ? getImageUrl(product.images[0])
               : 'https://placehold.co/600x800/eee/999?text=No+Image';
           const liked = true;
 

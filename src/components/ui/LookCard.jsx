@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { formatPrice, getEffectivePrice } from '../../utils';
+import { getImageUrl } from '../../services/imageUrl';
 
 const LookCard = ({ look }) => {
   const { title, description, products, image, tag } = look;
@@ -13,7 +14,7 @@ const LookCard = ({ look }) => {
       <div className="relative bg-cream overflow-hidden">
         <div className="aspect-[3/4] overflow-hidden">
           <img
-            src={image || 'https://placehold.co/600x800/eee/999?text=Look+Image'}
+            src={getImageUrl(image) || 'https://placehold.co/600x800/eee/999?text=Look+Image'}
             alt={title}
             loading="lazy"
             className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"

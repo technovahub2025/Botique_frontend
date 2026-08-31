@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Package, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { getImageUrl } from '../../services/imageUrl';
 
 const Inventory = () => {
   const [products, setProducts] = useState([]);
@@ -147,7 +148,7 @@ const Inventory = () => {
                       <td className="p-3">
                         <div className="flex items-center gap-2">
                           {product.thumbnail && (
-                            <img src={product.thumbnail} alt="" className="w-8 h-8 rounded object-cover" />
+                            <img                                 src={getImageUrl(product.thumbnail)} alt="" className="w-8 h-8 rounded object-cover" />
                           )}
                           <span className="font-medium">{product.name}</span>
                         </div>

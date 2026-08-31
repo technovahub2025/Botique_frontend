@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Search, ThumbsUp, Check, X, Trash2, Filter } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { getImageUrl } from '../../services/imageUrl';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -166,7 +167,7 @@ const Reviews = () => {
                       <td className="p-3">
                         <div className="flex items-center gap-2">
                           {review.product?.thumbnail && (
-                            <img src={review.product.thumbnail} alt="" className="w-6 h-6 rounded object-cover" />
+                            <img src={getImageUrl(review.product?.thumbnail)} alt="" className="w-6 h-6 rounded object-cover" />
                           )}
                           {review.product?.name || 'Unknown Product'}
                         </div>

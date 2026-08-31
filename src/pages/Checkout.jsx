@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, ShoppingBag, Tag } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice, getEffectivePrice, calculateShipping, calculateTax } from '../utils';
+import { getImageUrl } from '../services/imageUrl';
 import api from '../services/api';
 
 const DELIVERY_METHODS = [
@@ -260,7 +261,7 @@ const OrderSummary = ({
             <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
               {item.product?.images?.[0] && (
                 <img
-                  src={item.product.images[0]}
+                  src={getImageUrl(item.product.images[0])}
                   alt={item.product?.name || 'Product'}
                   className="w-full h-full object-cover rounded"
                 />

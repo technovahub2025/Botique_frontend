@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../../services/imageUrl';
 
 const CollectionCard = ({ collection, size = 'medium' }) => {
-  const imageSrc =
-    collection.heroImage ||
-    collection.bannerImage ||
-    'https://placehold.co/800x1000/eee/999?text=No+Image';
+  const rawImage = collection.heroImage || collection.bannerImage;
+  const imageSrc = rawImage
+    ? getImageUrl(rawImage)
+    : 'https://placehold.co/800x1000/eee/999?text=No+Image';
 
   const sizeClasses = {
     small: 'aspect-[3/4]',

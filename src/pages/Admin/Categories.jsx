@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { getImageUrl } from '../../services/imageUrl';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -118,7 +119,7 @@ const Categories = () => {
                 <tr key={cat._id} className="border-b last:border-0">
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      {cat.image && <img src={cat.image} alt="" className="w-6 h-6 rounded" />}
+                      {cat.image && <img src={getImageUrl(cat.image)} alt="" className="w-6 h-6 rounded" />}
                       {cat.name}
                     </div>
                   </td>

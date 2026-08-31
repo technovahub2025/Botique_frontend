@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '../ui/Button';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
+import { getImageUrl } from '../../services/imageUrl';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1512436955456-8a671a6b0e4c?auto=format&fit=crop&w=1920&h=700&q=50';
@@ -98,7 +99,7 @@ const Hero = () => {
   useEffect(() => {
     let cancelled = false;
       slides.forEach((s, i) => {
-        loadImg(s.imageUrl).then((ratio) => {
+          loadImg(getImageUrl(s.imageUrl)).then((ratio) => {
           if (cancelled) return;
           setLoadedImages((l) => new Set(l).add(i));
           if (ratio) setAspectRatios((m) => ({ ...m, [i]: ratio }));
@@ -151,7 +152,7 @@ const Hero = () => {
         {slides.map((slide, i) => {
           const isActive = i === safeIndex;
           const loaded = loadedImages.has(i);
-          const imgSrc = failedImages.has(i) ? FALLBACK_IMAGE : slide.imageUrl;
+          const imgSrc = failedImages.has(i) ? FALLBACK_IMAGE : getImageUrl(slide.imageUrl);
           const objectPosition = getAutoPosition(aspectRatios[i]);
           return (
             <div

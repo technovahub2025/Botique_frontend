@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, Filter, Edit, Trash2, Plus, Eye, MoreVertical } from 'lucide-react';
 import { formatPrice } from '../../utils';
 import adminApi from '../../services/adminApi';
+import { getImageUrl } from '../../services/imageUrl';
 
 const STATUSES = ['all', 'draft', 'active', 'archived'];
 
@@ -115,7 +116,7 @@ const Products = () => {
                           <div className="w-10 h-10 bg-gray-200 rounded flex-shrink-0 flex items-center justify-center">
                             {product.thumbnail && (
                               <img
-                                src={product.thumbnail}
+                                src={getImageUrl(product.thumbnail)}
                                 alt={product.name}
                                 className="w-full h-full object-cover rounded"
                               />

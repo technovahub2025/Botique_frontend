@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
 import { formatPrice, getEffectivePrice, calculateDiscount } from '../utils';
+import { getImageUrl } from '../services/imageUrl';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import Accordion from '../components/ui/Accordion';
@@ -198,7 +199,7 @@ const ProductDetails = () => {
                   }`}
                 >
                   <img
-                    src={img}
+                    src={getImageUrl(img)}
                     alt={`${product.name} ${idx + 1}`}
                     className="w-full h-full object-cover object-top"
                     loading="lazy"
@@ -217,7 +218,7 @@ const ProductDetails = () => {
         <div className="relative lg:col-start-2">
           <div className="aspect-[3/4] overflow-hidden bg-cream">
             <img
-              src={currentImage}
+              src={getImageUrl(currentImage)}
               alt={product.name}
               loading="lazy"
               className="w-full h-full object-cover object-top transition-opacity duration-300"

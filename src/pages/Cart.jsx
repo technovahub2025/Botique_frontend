@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { formatPrice, getEffectivePrice } from '../utils';
+import { getImageUrl } from '../services/imageUrl';
 
 const Cart = () => {
    const {
@@ -100,7 +101,7 @@ const Cart = () => {
               <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0 flex items-center justify-center">
                 {product.images && product.images.length > 0 && (
                   <img
-                    src={product.images[0]}
+                    src={getImageUrl(product.images[0])}
                     alt={product.name}
                     className="max-w-full max-h-full object-cover rounded"
                   />

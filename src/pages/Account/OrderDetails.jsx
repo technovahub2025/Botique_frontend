@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Package, Calendar, Clock, Check, Truck, FileText } from 'lucide-react';
 import { formatPrice } from '../../utils';
+import { getImageUrl } from '../../services/imageUrl';
 import api from '../../services/api';
 
 const STATUS_CONFIG = {
@@ -156,7 +157,7 @@ const OrderDetails = () => {
               <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0 flex items-center justify-center">
                 {item.image && (
                   <img
-                    src={item.image}
+                    src={getImageUrl(item.image)}
                     alt={item.name}
                     className="max-w-full max-h-full object-cover rounded"
                   />

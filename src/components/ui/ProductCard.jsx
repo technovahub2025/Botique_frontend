@@ -3,6 +3,7 @@ import { Heart, ShoppingCart, Eye } from 'lucide-react';
 import { formatPrice, getEffectivePrice, calculateDiscount } from '../../utils';
 import { useWishlist } from '../../hooks/useWishlist';
 import { useCart } from '../../hooks/useCart';
+import { getImageUrl } from '../../services/imageUrl';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const ProductCard = ({ product }) => {
 
   const imageSrc =
     product.images && product.images.length > 0
-      ? product.images[0]
+      ? getImageUrl(product.images[0])
       : 'https://placehold.co/600x800/eee/999?text=No+Image';
 
   const handleQuickView = (e) => {
