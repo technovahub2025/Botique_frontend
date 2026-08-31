@@ -8,6 +8,8 @@ import { getImageUrl } from '../../services/imageUrl';
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1512436955456-8a671a6b0e4c?auto=format&fit=crop&w=1920&h=700&q=50';
 const AUTO_PLAY_DELAY = 5500;
+const MOBILE_CONTAINER_RATIO = 16 / 9;
+const DESKTOP_CONTAINER_RATIO = 21 / 9;
 
 const isValidImageUrl = (url) => {
   if (!url || typeof url !== 'string') return false;
@@ -82,8 +84,30 @@ const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [loadedImages, setLoadedImages] = useState(new Set());
   const [failedImages, setFailedImages] = useState(new Set());
+  const [imageMeta, setImageMeta] = useState({});
+  const [containerRatio, setContainerRatio] = useState(MOBILE_CONTAINER_RATIO);
+  const containerRef = useRef(null);
   const slideTransitionRef = useRef(null);
   const navResetRef = useRef(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const updateRatio = () => {
+      const r = el.getBoundingClientRect();
+      setContainerRatio(r.width && r.height ? r.width / r.height : DESKTOP_CONTAINER_RATIO);
+    };
+    updateRatio();
+    window.addEventListener('resize', updateRatio);
+    return () => window.removeEventListener('resize', updateRatio);
+  }, []);
+
+  const getFitStrategy = (slide) => {
+    const meta = imageMeta[slide.id];
+    if (!meta || !meta.naturalHeight) return 'cover';
+    const sourceRatio = meta.naturalWidth / meta.naturalHeight;
+    return sourceRatio >= containerRatio ? 'cover' : 'contain';
+  };
 
   const goNext = () => {
     setActiveIndex((i) => (i + 1) % slides.length);
@@ -121,7 +145,10 @@ const Hero = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-full aspect-[21/9] max-h-[480px] min-h-[280px] lg:max-h-[720px] lg:min-h-[500px]">
+      <div
+        ref={containerRef}
+        className="relative w-full aspect-[16/9] md:aspect-[21/9] max-h-[480px] min-h-[280px] lg:max-h-[720px] lg:min-h-[500px]"
+      >
         <div className="absolute inset-0 bg-gradient-to-r from-black/35 via-black/10 to-transparent pointer-events-none" />
 
         {slides.map((slide, i) => {
@@ -129,6 +156,8 @@ const Hero = () => {
           const loaded = loadedImages.has(slide.id);
           const failed = failedImages.has(slide.id);
           const imgSrc = failed ? FALLBACK_IMAGE : getImageUrl(slide.imageUrl);
+          const strategy = getFitStrategy(slide);
+          const fitClass = strategy === 'cover' ? 'object-cover' : 'object-contain';
           return (
             <div
               key={slide.id}
@@ -138,12 +167,30 @@ const Hero = () => {
             >
               <img
                 src={imgSrc}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover blur-sm opacity-60 scale-105"
+              />
+              <img
+                src={imgSrc}
                 alt={slide.heading || slide.smallLabel || 'Hero banner'}
                 loading="eager"
                 decoding="async"
-                onLoad={() => setLoadedImages((l) => new Set(l).add(slide.id))}
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  setImageMeta((m) => ({
+                    ...m,
+                    [slide.id]: {
+                      naturalWidth: img.naturalWidth,
+                      naturalHeight: img.naturalHeight,
+                    },
+                  }));
+                  setLoadedImages((l) => new Set(l).add(slide.id));
+                }}
                 onError={() => setFailedImages((f) => new Set(f).add(slide.id))}
-                className="absolute inset-0 w-full h-full object-cover object-center"
+                className={`absolute inset-0 w-full h-full ${fitClass} object-center`}
                 style={{
                   opacity: isActive && loaded ? 1 : 0,
                   transition: isActive && loaded ? 'opacity 400ms ease-out' : 'none',
