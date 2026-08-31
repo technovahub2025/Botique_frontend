@@ -19,9 +19,31 @@ adminApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+const MAX_RETRIES = 3;
+
+const isRetryable = (error) => {
+  if (!error.response) {
+    const code = error.code;
+    return Boolean(code) && ['ECONNRESET', 'ECONNREFUSED', 'ETIMEDOUT', 'EAI_AGAIN'].includes(code);
+  }
+  if (error.response?.data?.isRetryable === true) {
+    return true;
+  }
+  const status = error.response.status;
+  return status >= 500 && status < 600;
+};
+
 adminApi.interceptors.response.use(
   (response) => response,
   (error) => {
+    const config = error.config;
+    if (config) {
+      config._retryCount = (config._retryCount || 0) + 1;
+      if (config._retryCount <= MAX_RETRIES && isRetryable(error)) {
+        const delay = Math.min(1000 * Math.pow(2, config._retryCount - 1), 5000);
+        return new Promise((resolve) => setTimeout(resolve, delay)).then(() => adminApi(config));
+      }
+    }
     if (error.response?.status === 401) {
       localStorage.removeItem('adminToken');
       window.dispatchEvent(new Event('admin:logout'));
