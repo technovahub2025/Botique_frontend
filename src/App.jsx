@@ -1,12 +1,10 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import MainLayout from './layouts/MainLayout';
-import AdminAuthProvider from './context/AdminAuthContext';
 import AdminRequireAuth from './components/AdminRequireAuth';
-import AdminLogin from './pages/Admin/AdminLogin';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/Admin/Dashboard';
 import AdminProducts from './pages/Admin/Products';
@@ -77,27 +75,24 @@ function App() {
               </Route>
             </Route>
 
-            <Route element={<AdminAuthProvider />}>
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route element={<AdminRequireAuth />}>
-                <Route element={<AdminLayout />}>
-                  <Route element={<ErrorBoundaryWithReset title="Dashboard Error" description="An error occurred while loading this page." showHomeButton />}>
-                    <Route path="/admin" element={<Dashboard />} />
-                    <Route path="/admin/products" element={<AdminProducts />} />
-                    <Route path="/admin/products/new" element={<ProductForm />} />
-                    <Route path="/admin/products/:id/edit" element={<ProductForm />} />
-                    <Route path="/admin/categories" element={<AdminCategories />} />
-                    <Route path="/admin/collections" element={<AdminCollections />} />
-                    <Route path="/admin/orders" element={<AdminOrders />} />
-                    <Route path="/admin/customers" element={<Customers />} />
-                  
-                    <Route path="/admin/homepage" element={<Homepage />} />
-                    <Route path="/admin/settings" element={<Settings />} />
-                  </Route>
+            <Route element={<AdminRequireAuth />}>
+              <Route element={<AdminLayout />}>
+                <Route element={<ErrorBoundaryWithReset title="Dashboard Error" description="An error occurred while loading this page." showHomeButton />}>
+                  <Route path="/admin" element={<Dashboard />} />
+                  <Route path="/admin/products" element={<AdminProducts />} />
+                  <Route path="/admin/products/new" element={<ProductForm />} />
+                  <Route path="/admin/products/:id/edit" element={<ProductForm />} />
+                  <Route path="/admin/categories" element={<AdminCategories />} />
+                  <Route path="/admin/collections" element={<AdminCollections />} />
+                  <Route path="/admin/orders" element={<AdminOrders />} />
+                  <Route path="/admin/customers" element={<Customers />} />
+                  <Route path="/admin/homepage" element={<Homepage />} />
+                  <Route path="/admin/settings" element={<Settings />} />
                 </Route>
               </Route>
             </Route>
 
+            <Route path="/admin/login" element={<Navigate to="/login" replace />} />
           </Routes>
         </WishlistProvider>
       </CartProvider>

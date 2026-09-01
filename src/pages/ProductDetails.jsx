@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
@@ -8,16 +8,6 @@ import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import Accordion from '../components/ui/Accordion';
 import ProductCard from '../components/ui/ProductCard';
-
-const ZOOM_LEVELS = [1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3];
-
-const getNextZoom = (current, delta) => {
-  const currentIndex = ZOOM_LEVELS.findIndex((z) => z >= current);
-  const step = delta < 0 ? 1 : -1;
-  let nextIndex = currentIndex + step;
-  nextIndex = Math.max(0, Math.min(ZOOM_LEVELS.length - 1, nextIndex));
-  return ZOOM_LEVELS[nextIndex];
-};
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -35,7 +25,6 @@ const ProductDetails = () => {
   const [relatedLoading, setRelatedLoading] = useState(true);
   const [zoom, setZoom] = useState(1);
   const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
-  const viewportRef = useRef(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -78,23 +67,6 @@ const ProductDetails = () => {
       fetchRelated();
     }
   }, [product]);
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const handleWheel = (event) => {
-      event.preventDefault();
-      const rect = viewport.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const originX = (x / rect.width) * 100;
-      const originY = (y / rect.height) * 100;
-      setZoomOrigin({ x: originX, y: originY });
-      setZoom((prev) => getNextZoom(prev, event.deltaY));
-    };
-    viewport.addEventListener('wheel', handleWheel, { passive: false });
-    return () => viewport.removeEventListener('wheel', handleWheel);
-  }, []);
 
   if (loading) {
     return (
@@ -148,6 +120,22 @@ const ProductDetails = () => {
   const currentImage = productImages[selectedImage] || productImages[0];
   const inStock = product.stock > 0;
   const liked = isInWishlist(product._id);
+
+  const handleImageWheel = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const container = event.currentTarget;
+    const rect = container.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    setZoomOrigin({ x, y });
+    const zoomStep = 0.2;
+    if (event.deltaY < 0) {
+      setZoom((prev) => Math.min(prev + zoomStep, 3));
+    } else {
+      setZoom((prev) => Math.max(prev - zoomStep, 1));
+    }
+  };
 
   const handleAddToBag = () => {
     addItem(product, quantity, selectedSize);
@@ -259,21 +247,22 @@ const ProductDetails = () => {
         <div className="relative lg:col-start-2 flex justify-center">
           <div className="w-full max-w-[560px] max-h-[700px] overflow-hidden bg-cream rounded-lg">
             <div
-              ref={viewportRef}
               className="aspect-[3/4] overflow-hidden relative"
+              onWheel={handleImageWheel}
+              style={{ overflow: 'hidden' }}
             >
               <img
                 src={getImageUrl(currentImage)}
                 alt={product.name}
                 loading="lazy"
-                className="w-full h-full object-contain object-center transition-opacity duration-300"
+                className="w-full h-full object-contain object-center"
                 style={{
                   transform: `scale(${zoom})`,
                   transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
-                  transition: 'transform 150ms ease-out',
+                  transition: 'transform 120ms ease-out',
                   cursor: zoom <= 1 ? 'zoom-in' : 'zoom-out',
                 }}
-                onLoad={(e) => { e.target.classList.add('image-loaded'); }}
+                onLoad={(e) => { e.target.classList.add('image-loaded');}}
                 onError={(e) => {
                   e.target.src =
                     'https://placehold.co/800x1000/eee/999?text=No+Image';

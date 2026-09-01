@@ -1,6 +1,5 @@
 import { Link, Outlet, NavLink, useNavigate } from 'react-router-dom';
-import {
-  LayoutDashboard,
+import {  LayoutDashboard,
   Package,
   Tag,
   Layers,
@@ -16,16 +15,16 @@ import {
   Box,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useAdminAuth } from '../hooks/useAdminAuth';
+import { useAuth } from '../hooks/useAuth';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { adminUser, adminLogout } = useAdminAuth();
+  const { user: adminUser, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    adminLogout();
-    navigate('/admin/login');
+    logout();
+    navigate('/login');
   };
 
   const navItems = [

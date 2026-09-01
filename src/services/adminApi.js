@@ -8,9 +8,9 @@ const adminApi = axios.create({
   withCredentials: true,
 });
 
-adminApi.interceptors.request.use(
+   adminApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -45,8 +45,8 @@ adminApi.interceptors.response.use(
       }
     }
     if (error.response?.status === 401) {
-      localStorage.removeItem('adminToken');
-      window.dispatchEvent(new Event('admin:logout'));
+      localStorage.removeItem('token');
+      window.dispatchEvent(new Event('auth:logout'));
     }
     return Promise.reject(error);
   }

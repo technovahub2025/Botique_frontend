@@ -378,6 +378,7 @@ const DEFAULT_CARD_FIELDS = [
   { key: 'minPrice', label: 'Min Price', type: 'number', placeholder: '0' },
   { key: 'maxPrice', label: 'Max Price', type: 'number', placeholder: '15000' },
   { key: 'link', label: 'Link URL', type: 'text', placeholder: '/shop?maxPrice=15000' },
+  { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
 ];
 
 const PriceCardsEditor = ({ data, onChange }) => {
@@ -412,6 +413,7 @@ const PriceCardsEditor = ({ data, onChange }) => {
           minPrice: 0,
           maxPrice: 0,
           link: '',
+          imageUrl: '',
           order: nextOrder,
           enabled: true,
         },
@@ -530,6 +532,12 @@ const PriceCardsEditor = ({ data, onChange }) => {
                       />
                     </div>
                   ))}
+
+                  {DEFAULT_CARD_FIELDS.some((f) => f.key === 'imageUrl') && card.imageUrl && (
+                    <div className="mt-2">
+                      <ImageUrlPreview src={card.imageUrl} />
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>

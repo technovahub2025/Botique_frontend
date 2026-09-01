@@ -12,13 +12,12 @@ const RequireAuth = ({ admin = false }) => {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
-  if (admin && user.role !== 'admin') {
+  if (admin && String(user?.role || '').toLowerCase() !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
-  if (!admin && user.role === 'admin') {
-    localStorage.removeItem('token');
-    return <Navigate to="/admin/login" replace />;
+  if (!admin && String(user?.role || '').toLowerCase() === 'admin') {
+    return <Navigate to="/admin" replace />;
   }
 
   return <Outlet />;

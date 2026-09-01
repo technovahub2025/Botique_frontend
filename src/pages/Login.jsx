@@ -21,13 +21,14 @@ const Login = () => {
     setError('');
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
-      navigate(location.state?.from || '/', { replace: true });
-    } catch (err) {
-      if (err.message?.includes('Admin access is not available')) {
-        navigate('/admin/login');
-        return;
+      const res = await login(formData.email, formData.password);
+      const role = String(res.user?.role || '').toLowerCase();
+      if (role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate(location.state?.from || '/', { replace: true });
       }
+    } catch (err) {
       if (err.response?.status === 429) {
         setError('Too many login attempts. Please wait and try again.');
       } else if (err.response?.status === 401) {

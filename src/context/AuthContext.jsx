@@ -14,14 +14,8 @@ export const AuthProvider = ({ children }) => {
       if (storedToken) {
         try {
           const res = await api.get('/auth/me');
-          if (res.data.user.role === 'admin') {
-            localStorage.removeItem('token');
-            setToken(null);
-            setUser(null);
-          } else {
-            setToken(storedToken);
-            setUser(res.data.user);
-          }
+          setToken(storedToken);
+          setUser(res.data.user);
         } catch {
           localStorage.removeItem('token');
           setToken(null);
@@ -36,11 +30,6 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
     const { token: newToken, user: userData } = res.data;
-
-    if (userData.role === 'admin') {
-      throw new Error('Admin access is not available through customer login. Please use the admin login page.');
-    }
-
     localStorage.setItem('token', newToken);
     setToken(newToken);
     setUser(userData);
