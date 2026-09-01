@@ -70,6 +70,23 @@ const SECTIONS = [
     ],
   },
   {
+    id: 'price_sections',
+    name: 'Price Curation',
+    icon: Tag,
+    fields: [
+      { key: 'subtitle', label: 'Section Eyebrow', type: 'text', placeholder: 'CURATED BY PRICE' },
+      { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Find Your Investment' },
+    ],
+    customRender: 'price-cards',
+    priceCardFields: [
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'UNDER ₹15K' },
+      { key: 'description', label: 'Description', type: 'text', placeholder: 'Accessible luxury starting points.' },
+      { key: 'minPrice', label: 'Min Price', type: 'number', placeholder: '0' },
+      { key: 'maxPrice', label: 'Max Price', type: 'number', placeholder: '15000' },
+      { key: 'link', label: 'Link URL', type: 'text', placeholder: '/shop?maxPrice=15000' },
+    ],
+  },
+  {
     id: 'newsletter',
     name: 'Newsletter',
     icon: Mail,
@@ -355,6 +372,211 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   );
 };
 
+const DEFAULT_CARD_FIELDS = [
+  { key: 'title', label: 'Title', type: 'text', placeholder: 'UNDER ₹15K' },
+  { key: 'description', label: 'Description', type: 'text', placeholder: 'Accessible luxury starting points.' },
+  { key: 'minPrice', label: 'Min Price', type: 'number', placeholder: '0' },
+  { key: 'maxPrice', label: 'Max Price', type: 'number', placeholder: '15000' },
+  { key: 'link', label: 'Link URL', type: 'text', placeholder: '/shop?maxPrice=15000' },
+];
+
+const PriceCardsEditor = ({ data, onChange }) => {
+  const [expandedCards, setExpandedCards] = useState({});
+  const cards = Array.isArray(data.cards) ? data.cards : [];
+
+  const updateCard = (cardIndex, field, value) => {
+    onChange('cards', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      const newCards = [...current];
+      if (!newCards[cardIndex] || typeof newCards[cardIndex] !== 'object') {
+        newCards[cardIndex] = {};
+      }
+      newCards[cardIndex] = { ...newCards[cardIndex], [field]: value };
+      return newCards;
+    });
+  };
+
+  const toggleExpand = (idx) => {
+    setExpandedCards((prev) => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  const addCard = () => {
+    onChange('cards', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      const nextOrder = current.length > 0 ? Math.max(...current.map((c) => c.order || 0)) + 1 : 1;
+      return [
+        ...current,
+        {
+          title: '',
+          description: '',
+          minPrice: 0,
+          maxPrice: 0,
+          link: '',
+          order: nextOrder,
+          enabled: true,
+        },
+      ];
+    });
+    setExpandedCards((prev) => ({ ...prev, [cards.length]: true }));
+  };
+
+  const removeCard = (idx) => {
+    onChange('cards', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      return current
+        .map((c, i) => (i === idx ? null : c))
+        .filter(Boolean)
+        .map((c, i) => ({ ...c, order: i + 1 }));
+    });
+    setExpandedCards((prev) => {
+      const next = { ...prev };
+      delete next[idx];
+      return next;
+    });
+  };
+
+  const moveCard = (from, to) => {
+    onChange('cards', (prev) => {
+      const current = Array.isArray(prev) ? prev : [];
+      if (to < 0 || to >= current.length) return prev;
+      const newCards = [...current];
+      const [removed] = newCards.splice(from, 1);
+      newCards.splice(to, 0, removed);
+      newCards.forEach((c, i) => {
+        c.order = i + 1;
+      });
+      return newCards;
+    });
+  };
+
+  return (
+    <div className="md:col-span-2">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Price Cards
+      </label>
+      <div className="space-y-4">
+        {cards.map((card, idx) => {
+          const cardOrder = card?.order || idx + 1;
+          const cardEnabled = card?.enabled !== undefined ? card.enabled : true;
+          const isOpen = expandedCards[idx] || false;
+
+          return (
+            <div
+              key={card.id || idx}
+              className={`border border-gray-200 rounded-lg p-4 transition-all duration-200 ${
+                cardEnabled ? 'border-gold/30' : 'opacity-60'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm text-gray-700">Card {idx + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => toggleExpand(idx)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => moveCard(idx, idx - 1)}
+                    disabled={idx === 0}
+                    className="text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30"
+                    aria-label="Move up"
+                  >
+                    <ChevronUp className="w-3 h-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveCard(idx, idx + 1)}
+                    disabled={idx === cards.length - 1}
+                    className="text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30"
+                    aria-label="Move down"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeCard(idx)}
+                    className="text-xs text-red-500 hover:text-red-700"
+                    aria-label="Remove card"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {isOpen && (
+                <div className="space-y-3">
+                  {DEFAULT_CARD_FIELDS.map((field) => (
+                    <div key={field.key}>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        {field.label}
+                      </label>
+                      <input
+                        type={field.type === 'number' ? 'number' : 'text'}
+                        value={field.type === 'number' ? (card[field.key] ?? '') : (card[field.key] ?? '')}
+                        onChange={(e) =>
+                          updateCard(
+                            idx,
+                            field.key,
+                            field.type === 'number' ? Number(e.target.value) : e.target.value
+                          )
+                        }
+                        placeholder={field.placeholder}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                      />
+                    </div>
+                  ))}
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Display Order
+                      </label>
+                      <input
+                        type="number"
+                        value={cardOrder}
+                        onChange={(e) => updateCard(idx, 'order', Number(e.target.value))}
+                        min="1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={cardEnabled}
+                          onChange={(e) => {
+                            updateCard(idx, 'enabled', e.target.checked);
+                          }}
+                          className="w-4 h-4 text-gold focus:ring-gold border-gray-300 rounded"
+                        />
+                        Enabled
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <button
+          type="button"
+          onClick={addCard}
+          className="text-sm text-gold hover:text-burgundy font-medium flex items-center gap-1"
+        >
+          <Plus className="w-4 h-4" />
+          + Add Price Card
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Homepage = () => {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -515,8 +737,18 @@ const Homepage = () => {
                   />
                 ) : null}
 
+                {section.customRender === 'price-cards' ? (
+                  <PriceCardsEditor
+                    data={data}
+                    onChange={(field, value) => updateField(section.id, field, value)}
+                  />
+                ) : null}
+
                 {section.fields.map((field) => {
                   if (section.customRender === 'hero-slides' && ['heroImages'].includes(field.key)) {
+                    return null;
+                  }
+                  if (section.customRender === 'price-cards' && ['cards'].includes(field.key)) {
                     return null;
                   }
 

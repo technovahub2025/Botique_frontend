@@ -79,8 +79,10 @@ const ProductDetails = () => {
                 ))}
               </div>
             </div>
-            <div className="lg:col-start-2">
-              <div className="aspect-[3/4] bg-gray-200 rounded" />
+            <div className="lg:col-start-2 flex justify-center">
+              <div className="w-full max-w-[560px] max-h-[700px]">
+                <div className="aspect-[3/4] bg-gray-200 rounded" />
+              </div>
             </div>
           </div>
           <div className="mt-8 space-y-4">
@@ -215,19 +217,21 @@ const ProductDetails = () => {
         )}
 
         {/* Main Image: top on mobile, right column on desktop */}
-        <div className="relative lg:col-start-2">
-          <div className="aspect-[3/4] overflow-hidden bg-cream">
-            <img
-              src={getImageUrl(currentImage)}
-              alt={product.name}
-              loading="lazy"
-              className="w-full h-full object-cover object-top transition-opacity duration-300"
-              onLoad={(e) => { e.target.classList.add('image-loaded'); }}
-              onError={(e) => {
-                e.target.src =
-                  'https://placehold.co/800x1000/eee/999?text=No+Image';
-              }}
-            />
+        <div className="relative lg:col-start-2 flex justify-center">
+          <div className="w-full max-w-[560px] max-h-[700px] overflow-hidden bg-cream rounded-lg">
+            <div className="aspect-[3/4] overflow-hidden">
+              <img
+                src={getImageUrl(currentImage)}
+                alt={product.name}
+                loading="lazy"
+                className="w-full h-full object-contain object-center transition-opacity duration-300"
+                onLoad={(e) => { e.target.classList.add('image-loaded'); }}
+                onError={(e) => {
+                  e.target.src =
+                    'https://placehold.co/800x1000/eee/999?text=No+Image';
+                }}
+              />
+            </div>
           </div>
 
           {productImages.length > 1 && (
