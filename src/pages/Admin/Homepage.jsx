@@ -39,16 +39,6 @@ const SECTIONS = [
     ],
   },
   {
-    id: 'shop_the_look',
-    name: 'Shop The Look',
-    icon: Image,
-    fields: [
-      { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Shop The Look' },
-      { key: 'images', label: 'Look Images (comma separated URLs)', type: 'text', placeholder: 'https://... , https://...', ui: 'image-url' },
-      { key: 'description', label: 'Description', type: 'text', placeholder: 'Style inspiration' },
-    ],
-  },
-  {
     id: 'editorial',
     name: 'Editorial Section',
     icon: FileText,
@@ -230,7 +220,7 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                 </div>
               </div>
 
-              {isOpen && (
+               {isOpen && (
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -242,7 +232,14 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                       onChange={(e) => updateSlide(idx, 'imageUrl', e.target.value)}
                       placeholder="https://..."
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                    />
+                   {imageUrl && (
+                     <ImageUrlPreview
+                       url={imageUrl}
+                       alt={`Slide ${idx + 1} preview`}
+                       className="max-w-[500px]"
                      />
+                   )}
                    </div>
 
                    <div>
@@ -338,19 +335,11 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                         Active
                       </label>
                     </div>
-                  </div>
+                   </div>
                 </div>
               )}
-
-              {imageUrl && (isOpen || enabled) && (
-                <ImageUrlPreview
-                  url={imageUrl}
-                  alt={`Slide ${idx + 1} preview`}
-                  className="h-32"
-                />
-              )}
-            </div>
-          );
+              </div>
+            );
         })}
 
         <button

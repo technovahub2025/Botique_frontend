@@ -3,7 +3,6 @@ import ProductCarousel from '../components/sections/ProductCarousel';
 import ShopByCategory from '../components/sections/ShopByCategory';
 import FeaturedCollection from '../components/sections/FeaturedCollection';
 import EditorialSection from '../components/sections/EditorialSection';
-import ShopTheLook from '../components/sections/ShopTheLook';
 import CollectionGrid from '../components/sections/CollectionGrid';
 import Craftsmanship from '../components/sections/Craftsmanship';
 import TrendingProducts from '../components/sections/TrendingProducts';
@@ -33,8 +32,6 @@ const HomeContent = () => {
       {isSectionEnabled('featured_collection') && <FeaturedCollection />}
 
       {isSectionEnabled('editorial') && <EditorialSection />}
-
-      {isSectionEnabled('shop_the_look') && <ShopTheLook />}
 
       <CollectionGrid />
 
