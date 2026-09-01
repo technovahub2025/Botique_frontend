@@ -72,6 +72,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const viewport = imageViewportRef.current;
     if (!viewport) return;
+
     const handleWheel = (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -79,16 +80,17 @@ const ProductDetails = () => {
       const x = ((event.clientX - rect.left) / rect.width) * 100;
       const y = ((event.clientY - rect.top) / rect.height) * 100;
       setZoomOrigin({ x, y });
-      const zoomStep = 0.2;
+      const zoomStep = 0.15;
       if (event.deltaY < 0) {
         setZoom((prev) => Math.min(prev + zoomStep, 3));
       } else {
         setZoom((prev) => Math.max(prev - zoomStep, 1));
       }
     };
+
     viewport.addEventListener('wheel', handleWheel, { passive: false });
     return () => viewport.removeEventListener('wheel', handleWheel);
-  }, []);
+  }, [loading, product]);
 
   if (loading) {
     return (
