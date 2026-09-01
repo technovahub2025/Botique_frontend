@@ -41,7 +41,7 @@ const FeaturedCollection = () => {
 
   const title = featured.title || collection?.name || 'The Monsoon Reverie';
   const subtitle = featured.subtitle || "Editor's curated selection";
-  const rawImage = collection?.heroImage || collection?.bannerImage;
+  const rawImage = featured.image || collection?.heroImage || collection?.bannerImage;
   const imageUrl = getImageUrl(rawImage)
     || 'https://images.unsplash.com/photo-1612817125339-8a4d3b1f5a56?auto=format&fit=crop&w=1920&q=80';
   const description = collection?.description || "A capsule collection of hand-block printed silhouettes in earthy indigos and muted golds, inspired by the monsoon season. Each piece is crafted by artisan cooperatives in Rajasthan.";

@@ -25,6 +25,7 @@ const SECTIONS = [
       { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Featured Collection' },
       { key: 'collectionId', label: 'Collection ID', type: 'text', placeholder: 'Select collection' },
       { key: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Curated selection' },
+      { key: 'image', label: 'Image URL', type: 'text', placeholder: 'https://...' },
     ],
   },
   {
@@ -92,7 +93,6 @@ const SECTIONS = [
 
 const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   const [expandedSlides, setExpandedSlides] = useState({});
-  const [uploadingIdx, setUploadingIdx] = useState(null);
 
   const slides = Array.isArray(data.heroImages) ? data.heroImages : [];
 
@@ -106,23 +106,6 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
       newSlides[slideIndex] = { ...newSlides[slideIndex], [field]: value };
       return newSlides;
     });
-  };
-
-  const uploadImage = async (slideIndex, file) => {
-    setUploadingIdx(slideIndex);
-    try {
-      const form = new FormData();
-      form.append('image', file);
-      const res = await adminApi.post('/upload', form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      const url = res.data?.url || '';
-      updateSlide(slideIndex, 'imageUrl', url);
-    } catch (e) {
-      console.error('Upload failed:', e);
-    } finally {
-      setUploadingIdx(null);
-    }
   };
 
   const toggleExpand = (idx) => {
@@ -259,34 +242,12 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                       onChange={(e) => updateSlide(idx, 'imageUrl', e.target.value)}
                       placeholder="https://..."
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
-                    />
-                  </div>
+                     />
+                   </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Upload Image
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      disabled={uploadingIdx === idx}
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) await uploadImage(idx, file);
-                        e.target.value = '';
-                      }}
-                      className="w-full text-sm text-gray-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border file:border-gray-300 file:bg-white file:text-charcoal file:hover:bg-gray-50"
-                    />
-                    {uploadingIdx === idx && <span className="text-xs text-gray-500">Uploading…</span>}
-                    <p className="text-xs text-gray-400 mt-1">
-                      Upload an image file to set it as this slide. The uploaded image keeps its original aspect
-                      ratio on the homepage.
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Small Label / Eyebrow
+                   <div>
+                     <label className="block text-xs font-medium text-gray-600 mb-1">
+                       Small Label / Eyebrow
                     </label>
                     <input
                       type="text"
