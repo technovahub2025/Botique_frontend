@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
@@ -25,6 +25,7 @@ const ProductDetails = () => {
   const [relatedLoading, setRelatedLoading] = useState(true);
   const [zoom, setZoom] = useState(1);
   const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+  const imageViewportRef = useRef(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -67,6 +68,27 @@ const ProductDetails = () => {
       fetchRelated();
     }
   }, [product]);
+
+  useEffect(() => {
+    const viewport = imageViewportRef.current;
+    if (!viewport) return;
+    const handleWheel = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const rect = viewport.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      setZoomOrigin({ x, y });
+      const zoomStep = 0.2;
+      if (event.deltaY < 0) {
+        setZoom((prev) => Math.min(prev + zoomStep, 3));
+      } else {
+        setZoom((prev) => Math.max(prev - zoomStep, 1));
+      }
+    };
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+    return () => viewport.removeEventListener('wheel', handleWheel);
+  }, []);
 
   if (loading) {
     return (
@@ -120,22 +142,6 @@ const ProductDetails = () => {
   const currentImage = productImages[selectedImage] || productImages[0];
   const inStock = product.stock > 0;
   const liked = isInWishlist(product._id);
-
-  const handleImageWheel = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const container = event.currentTarget;
-    const rect = container.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
-    setZoomOrigin({ x, y });
-    const zoomStep = 0.2;
-    if (event.deltaY < 0) {
-      setZoom((prev) => Math.min(prev + zoomStep, 3));
-    } else {
-      setZoom((prev) => Math.max(prev - zoomStep, 1));
-    }
-  };
 
   const handleAddToBag = () => {
     addItem(product, quantity, selectedSize);
@@ -247,9 +253,8 @@ const ProductDetails = () => {
         <div className="relative lg:col-start-2 flex justify-center">
           <div className="w-full max-w-[560px] max-h-[700px] overflow-hidden bg-cream rounded-lg">
             <div
+              ref={imageViewportRef}
               className="aspect-[3/4] overflow-hidden relative"
-              onWheel={handleImageWheel}
-              style={{ overflow: 'hidden' }}
             >
               <img
                 src={getImageUrl(currentImage)}
