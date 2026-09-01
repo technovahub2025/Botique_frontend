@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import adminApi from '../../services/adminApi';
-import { getImageUrl } from '../../services/imageUrl';
 import { toArray } from '../../utils';
+import ImageUrlPreview from '../../components/ui/ImageUrlPreview';
 
 const SECTIONS = [
   {
@@ -25,7 +25,7 @@ const SECTIONS = [
       { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Featured Collection' },
       { key: 'collectionId', label: 'Collection ID', type: 'text', placeholder: 'Select collection' },
       { key: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Curated selection' },
-      { key: 'image', label: 'Image URL', type: 'text', placeholder: 'https://...' },
+      { key: 'image', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
     ],
   },
   {
@@ -44,7 +44,7 @@ const SECTIONS = [
     icon: Image,
     fields: [
       { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Shop The Look' },
-      { key: 'images', label: 'Look Images (comma separated URLs)', type: 'text', placeholder: 'https://... , https://...' },
+      { key: 'images', label: 'Look Images (comma separated URLs)', type: 'text', placeholder: 'https://... , https://...', ui: 'image-url' },
       { key: 'description', label: 'Description', type: 'text', placeholder: 'Style inspiration' },
     ],
   },
@@ -55,7 +55,7 @@ const SECTIONS = [
     fields: [
       { key: 'title', label: 'Title', type: 'text', placeholder: 'The Art of Handweaving' },
       { key: 'content', label: 'Content', type: 'textarea', placeholder: 'Editorial content...' },
-      { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...' },
+      { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
       { key: 'linkUrl', label: 'Link URL', type: 'text', placeholder: '/story' },
     ],
   },
@@ -76,7 +76,7 @@ const SECTIONS = [
     fields: [
       { key: 'title', label: 'Title', type: 'text', placeholder: 'Our Craftsmanship' },
       { key: 'description', label: 'Description', type: 'text', placeholder: 'Handcrafted with care' },
-      { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...' },
+      { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
     ],
   },
   {
@@ -343,16 +343,11 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
               )}
 
               {imageUrl && (isOpen || enabled) && (
-                <div className="mt-3">
-                  <img
-                    src={getImageUrl(imageUrl)}
-                    alt={`Slide ${idx + 1} preview`}
-                     className="w-full h-32 object-contain object-center border border-gray-200 rounded"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                </div>
+                <ImageUrlPreview
+                  url={imageUrl}
+                  alt={`Slide ${idx + 1} preview`}
+                  className="h-32"
+                />
               )}
             </div>
           );
@@ -618,6 +613,13 @@ const Homepage = () => {
                           {...commonProps}
                           type={field.type === 'number' ? 'number' : 'text'}
                           placeholder={field.placeholder}
+                        />
+                      )}
+                      {field.ui === 'image-url' && (
+                        <ImageUrlPreview
+                          url={rawValue ? (typeof rawValue === 'string' ? rawValue : '') : ''}
+                          alt={field.label}
+                          className="max-w-[320px]"
                         />
                       )}
                     </div>
