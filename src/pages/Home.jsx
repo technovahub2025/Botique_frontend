@@ -2,6 +2,7 @@ import Hero from '../components/sections/Hero';
 import ProductCarousel from '../components/sections/ProductCarousel';
 import ShopByCategory from '../components/sections/ShopByCategory';
 import FeaturedCollection from '../components/sections/FeaturedCollection';
+import EditorialSection from '../components/sections/EditorialSection';
 import ShopTheLook from '../components/sections/ShopTheLook';
 import CollectionGrid from '../components/sections/CollectionGrid';
 import Craftsmanship from '../components/sections/Craftsmanship';
@@ -30,6 +31,8 @@ const HomeContent = () => {
       {isSectionEnabled('shop_by_category') && <ShopByCategory />}
 
       {isSectionEnabled('featured_collection') && <FeaturedCollection />}
+
+      {isSectionEnabled('editorial') && <EditorialSection />}
 
       {isSectionEnabled('shop_the_look') && <ShopTheLook />}
 
