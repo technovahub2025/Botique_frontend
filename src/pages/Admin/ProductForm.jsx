@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, X, Plus, Trash2 } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { toArray } from '../../utils';
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -41,7 +42,7 @@ const ProductForm = () => {
     const fetchCategories = async () => {
       try {
         const res = await adminApi.get('/categories?status=active&limit=100');
-        setCategories(res.data.categories || []);
+         setCategories(toArray(res.data.categories));
       } catch (err) {
         console.error('Failed to fetch categories:', err);
       }
@@ -50,7 +51,7 @@ const ProductForm = () => {
     const fetchCollections = async () => {
       try {
         const res = await adminApi.get('/collections?status=active&limit=100');
-        setCollections(res.data.collections || []);
+         setCollections(toArray(res.data.collections));
       } catch (err) {
         console.error('Failed to fetch collections:', err);
       }
@@ -76,8 +77,8 @@ const ProductForm = () => {
             sku: product.sku || '',
             images: product.images && product.images.length > 0 ? product.images : [''],
             thumbnail: product.thumbnail || '',
-            sizes: product.sizes || [],
-            colors: product.colors || [],
+            sizes: toArray(product.sizes),
+            colors: toArray(product.colors),
             stock: product.stock || 0,
             lowStockThreshold: product.lowStockThreshold || 5,
             featured: product.featured || false,
@@ -85,7 +86,7 @@ const ProductForm = () => {
             bestSeller: product.bestSeller || false,
             status: product.status || 'draft',
           });
-          setSizeInputs(product.sizes || []);
+          setSizeInputs(toArray(product.sizes));
         } catch (err) {
           setError(err.response?.data?.message || 'Failed to load product');
         } finally {

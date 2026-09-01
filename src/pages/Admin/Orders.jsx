@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Package, Calendar, User, MapPin, CreditCard, ChevronRight } from 'lucide-react';
-import { formatPrice } from '../../utils';
+import { formatPrice, toArray } from '../../utils';
 import adminApi from '../../services/adminApi';
 
 const STATUS_COLORS = {
@@ -44,7 +44,7 @@ const Orders = () => {
       if (statusFilter !== 'all') params.set('orderStatus', statusFilter);
 
       const res = await adminApi.get(`/orders?${params}`);
-      setOrders(res.data.orders || []);
+       setOrders(toArray(res.data, ['orders']));
       setTotalPages(1);
     } catch (err) {
       console.error('Failed to fetch orders:', err);

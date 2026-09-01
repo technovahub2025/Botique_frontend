@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 import ProductCard from '../ui/ProductCard';
 import SectionHeading from '../ui/SectionHeading';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
@@ -16,7 +17,7 @@ const TrendingProducts = () => {
       setLoading(true);
       try {
         const res = await api.get(`/products?limit=${limit}&sortBy=createdAt&order=desc&bestSeller=true`);
-        setProducts(res.data.products || []);
+         setProducts(toArray(res.data, ['products']));
       } catch {
         setProducts([]);
       } finally {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 import SectionHeading from '../ui/SectionHeading';
 import CollectionCard from '../ui/CollectionCard';
 
@@ -12,7 +13,7 @@ const CollectionGrid = () => {
       setLoading(true);
       try {
         const res = await api.get('/collections?status=active');
-        setCollections(res.data.collections || []);
+         setCollections(toArray(res.data, ['collections']));
       } catch {
         setCollections([]);
       } finally {

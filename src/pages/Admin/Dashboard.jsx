@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Calendar,
 } from 'lucide-react';
-import { formatPrice } from '../../utils';
+import { formatPrice, toArray } from '../../utils';
 import adminApi from '../../services/adminApi';
 
 const STATUS_COLORS = {
@@ -32,7 +32,7 @@ const Dashboard = () => {
         const res = await adminApi.get('/stats');
         if (res.data.success) {
           setStats(res.data.stats);
-          setRecentOrders(res.data.recentOrders || []);
+           setRecentOrders(toArray(res.data.recentOrders));
         }
       } catch (err) {
         console.error('Failed to fetch stats:', err);

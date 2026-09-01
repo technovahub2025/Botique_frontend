@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
+import { toArray } from '../utils';
 
 const HomepageSettingsContext = createContext();
 
@@ -11,11 +12,10 @@ export const HomepageSettingsProvider = ({ children }) => {
     const fetchHomepage = async () => {
       try {
         const res = await api.get('/homepage');
-        if (res.data.success && res.data.sections) {
-          setSections(res.data.sections);
-        }
+        setSections(toArray(res.data, ['sections']));
       } catch (err) {
         console.error('Failed to fetch homepage settings:', err);
+        setSections([]);
       } finally {
         setLoading(false);
       }
@@ -26,7 +26,9 @@ export const HomepageSettingsProvider = ({ children }) => {
   const getSection = useMemo(
     () =>
       (key) => {
-        const section = sections.find((s) => s && s.key === key);
+        const section = (Array.isArray(sections) ? sections : []).find(
+          (s) => s && s.key === key
+        );
         if (!section || !section.enabled) return {};
         return section.data || {};
       },
@@ -36,7 +38,9 @@ export const HomepageSettingsProvider = ({ children }) => {
   const isSectionEnabled = useMemo(
     () =>
       (key) => {
-        const section = sections.find((s) => s && s.key === key);
+        const section = (Array.isArray(sections) ? sections : []).find(
+          (s) => s && s.key === key
+        );
         return section ? section.enabled !== false : true;
       },
     [sections]

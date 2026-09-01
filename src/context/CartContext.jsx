@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useCallback } from 'react';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
-import { getEffectivePrice, calculateShipping, calculateTax } from '../utils';
+import { getEffectivePrice, calculateShipping, calculateTax, toArray } from '../utils';
 
 export const CartContext = createContext();
 
@@ -28,7 +28,7 @@ const setLocalCart = (items) => {
 };
 
 const normalizeBackendItems = (items) =>
-  (items || []).map((item) => ({
+  toArray(items).map((item) => ({
     id: item._id,
     product: item.product,
     quantity: item.quantity,
@@ -71,7 +71,7 @@ export const CartProvider = ({ children }) => {
     try {
       const res = await api.get('/cart');
       const cart = res.data.cart;
-      setItems(normalizeBackendItems(cart.items));
+      setItems(normalizeBackendItems(cart?.items));
       syncTotalsFromBackend(cart);
     } catch (err) {
       console.error('Failed to fetch cart:', err);
@@ -143,7 +143,7 @@ export const CartProvider = ({ children }) => {
             color: selectedColor,
           });
           const cart = res.data.cart;
-          setItems(normalizeBackendItems(cart.items));
+          setItems(normalizeBackendItems(cart?.items));
           syncTotalsFromBackend(cart);
           return cart;
         } catch (err) {
@@ -186,7 +186,7 @@ export const CartProvider = ({ children }) => {
         try {
           const res = await api.delete(`/cart/item/${itemId}`);
           const cart = res.data.cart;
-          setItems(normalizeBackendItems(cart.items));
+          setItems(normalizeBackendItems(cart?.items));
           syncTotalsFromBackend(cart);
         } catch (err) {
           console.error('Failed to remove item:', err);
@@ -216,7 +216,7 @@ export const CartProvider = ({ children }) => {
         try {
           const res = await api.put(`/cart/item/${itemId}`, { quantity });
           const cart = res.data.cart;
-          setItems(normalizeBackendItems(cart.items));
+          setItems(normalizeBackendItems(cart?.items));
           syncTotalsFromBackend(cart);
         } catch (err) {
           console.error('Failed to update quantity:', err);

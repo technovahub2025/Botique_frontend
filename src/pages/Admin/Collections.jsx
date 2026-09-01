@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { toArray } from '../../utils';
 
 const Collections = () => {
   const [collections, setCollections] = useState([]);
@@ -24,7 +25,7 @@ const Collections = () => {
       const params = new URLSearchParams({ limit: 100 });
       if (search) params.set('search', search);
       const res = await adminApi.get(`/collections?${params}`);
-      setCollections(res.data.collections || []);
+       setCollections(toArray(res.data, ['collections']));
     } catch (err) {
       console.error('Failed to fetch collections:', err);
     } finally {

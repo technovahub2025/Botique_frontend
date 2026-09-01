@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState, useCallback } from 'react';
 import api from '../services/api';
+import { toArray } from '../utils';
 import { useAuth } from '../hooks/useAuth';
 
 export const WishlistContext = createContext();
@@ -10,7 +11,8 @@ const CART_STORAGE_KEY = 'loom-and-luster-cart';
 const getLocalWishlist = () => {
   const saved = localStorage.getItem(WISHLIST_STORAGE_KEY);
   try {
-    return JSON.parse(saved || '[]');
+    const parsed = JSON.parse(saved || '[]');
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
@@ -24,14 +26,14 @@ export const WishlistProvider = ({ children }) => {
   const isAuthed = !!token;
 
   const normalizeBackendItems = (wishlistItems) =>
-    (wishlistItems || []).map((item) => item.product);
+    toArray(wishlistItems).map((item) => item.product);
 
   const fetchWishlist = useCallback(async () => {
     if (!isAuthed) return;
     setLoading(true);
     try {
       const res = await api.get('/wishlist');
-      setItems(normalizeBackendItems(res.data.wishlist.items));
+      setItems(normalizeBackendItems(res.data.wishlist?.items));
     } catch (err) {
       setItems([]);
     } finally {
@@ -57,7 +59,7 @@ export const WishlistProvider = ({ children }) => {
     async (product) => {
       if (isAuthed) {
         const res = await api.post('/wishlist', { productId: product._id });
-        setItems(normalizeBackendItems(res.data.wishlist.items));
+        setItems(normalizeBackendItems(res.data.wishlist?.items));
       } else {
         setItems((prev) => {
           if (prev.some((item) => item._id === product._id)) return prev;
@@ -72,7 +74,7 @@ export const WishlistProvider = ({ children }) => {
     async (productId) => {
       if (isAuthed) {
         const res = await api.delete(`/wishlist/${productId}`);
-        setItems(normalizeBackendItems(res.data.wishlist.items));
+        setItems(normalizeBackendItems(res.data.wishlist?.items));
       } else {
         setItems((prev) => prev.filter((item) => item._id !== productId));
       }
@@ -85,11 +87,11 @@ export const WishlistProvider = ({ children }) => {
       if (isAuthed) {
         try {
           const res = await api.post('/wishlist', { productId: product._id });
-          setItems(normalizeBackendItems(res.data.wishlist.items));
+          setItems(normalizeBackendItems(res.data.wishlist?.items));
         } catch (err) {
           if (err.response?.status === 400) {
             const res = await api.delete(`/wishlist/${product._id}`);
-            setItems(normalizeBackendItems(res.data.wishlist.items));
+            setItems(normalizeBackendItems(res.data.wishlist?.items));
           }
         }
       } else {
@@ -120,7 +122,7 @@ export const WishlistProvider = ({ children }) => {
           size,
           color,
         });
-        setItems(normalizeBackendItems(res.data.wishlist.items));
+        setItems(normalizeBackendItems(res.data.wishlist?.items));
         return res.data.cart;
       } else {
         const cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');

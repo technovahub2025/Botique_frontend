@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { getImageUrl } from '../../services/imageUrl';
+import { toArray } from '../../utils';
 
 const SECTIONS = [
   {
@@ -420,8 +421,8 @@ const Homepage = () => {
     const fetchHomepage = async () => {
       try {
         const res = await adminApi.get('/homepage');
-        if (res.data.success && res.data.sections) {
-          setSections(res.data.sections);
+        if (res.data.success) {
+          setSections(toArray(res.data, ['sections']));
         }
       } catch (err) {
         console.error('Failed to fetch homepage:', err);
@@ -494,7 +495,7 @@ const Homepage = () => {
     try {
       const res = await adminApi.put('/homepage', { sections: allSections });
       if (res.data.success) {
-        setSections(res.data.sections);
+        setSections(toArray(res.data, ['sections']));
         setSuccess('Homepage updated successfully!');
         setTimeout(() => setSuccess(''), 3000);
       }

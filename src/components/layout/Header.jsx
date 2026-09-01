@@ -6,6 +6,7 @@ import { useWishlist } from '../../hooks/useWishlist';
 import { useSettings } from '../../context/SettingsContext';
 import useClickAway from '../../hooks/useClickAway';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 
 
 const Header = () => {
@@ -23,7 +24,7 @@ const Header = () => {
     const fetchCategories = async () => {
       try {
         const res = await api.get('/categories?status=active');
-        setCategories(res.data.categories || []);
+         setCategories(toArray(res.data, ['categories']));
       } catch {
         setCategories([]);
       }

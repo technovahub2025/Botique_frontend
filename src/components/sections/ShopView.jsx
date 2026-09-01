@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 import ProductCard from '../ui/ProductCard';
 import ShopFilters from './ShopFilters';
 
@@ -47,8 +48,8 @@ const ShopView = ({ categorySlug = null, collectionSlug = null, title = 'Shop Al
           api.get('/categories?status=active'),
           api.get('/collections?status=active'),
         ]);
-        setCategories(catRes.data.categories || []);
-        setCollections(collRes.data.collections || []);
+         setCategories(toArray(catRes.data, ['categories']));
+         setCollections(toArray(collRes.data, ['collections']));
       } catch {
         setCategories([]);
         setCollections([]);
@@ -79,7 +80,7 @@ const ShopView = ({ categorySlug = null, collectionSlug = null, title = 'Shop Al
         }
 
         const res = await api.get('/products', { params: apiParams });
-        setProducts(res.data.products || []);
+         setProducts(toArray(res.data, ['products']));
       } catch {
         setProducts([]);
       } finally {
@@ -91,7 +92,7 @@ const ShopView = ({ categorySlug = null, collectionSlug = null, title = 'Shop Al
   }, [searchParams]);
 
   const { filteredProducts, availableSizes, availableColors } = useMemo(() => {
-    let result = products;
+    let result = Array.isArray(products) ? products : [];
 
     if (currentFilters.sizes.length > 0) {
       result = result.filter((p) =>

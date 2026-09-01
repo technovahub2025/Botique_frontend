@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Calendar, ChevronRight } from 'lucide-react';
-import { formatPrice } from '../../utils';
+import { formatPrice, toArray } from '../../utils';
 import { getImageUrl } from '../../services/imageUrl';
 import api from '../../services/api';
 
@@ -23,7 +23,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const res = await api.get('/orders');
-        setOrders(res.data.orders || []);
+         setOrders(toArray(res.data, ['orders']));
       } catch (err) {
         console.error('Failed to fetch orders:', err);
         setOrders([]);

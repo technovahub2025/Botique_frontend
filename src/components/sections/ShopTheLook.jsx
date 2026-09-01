@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 import LookCard from '../ui/LookCard';
 import SectionHeading from '../ui/SectionHeading';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
@@ -11,14 +12,14 @@ const ShopTheLook = () => {
 
   const title = shopTheLook.title || 'Shop The Look';
   const subtitle = shopTheLook.subtitle || 'Style inspiration from our artisans';
-  const sectionImages = shopTheLook.images || [];
+  const sectionImages = toArray(shopTheLook.images);
   const description = shopTheLook.description || '';
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
         const res = await api.get('/products?limit=6&sortBy=createdAt&order=desc&featured=true');
-        setProducts(res.data.products || []);
+        setProducts(toArray(res.data, ['products']));
       } catch {
         setProducts([]);
       }

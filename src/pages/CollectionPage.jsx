@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import api from '../services/api';
 import ShopView from '../components/sections/ShopView';
 import { getImageUrl } from '../services/imageUrl';
+import { toArray } from '../utils';
 
 const CollectionPage = () => {
   const { slug } = useParams();
@@ -18,7 +19,7 @@ const CollectionPage = () => {
       } catch {
         try {
           const res = await api.get('/collections?status=active');
-          const found = res.data.collections.find((c) => c.slug === slug);
+          const found = toArray(res.data, ['collections']).find((c) => c.slug === slug);
           setCollectionName(found?.name || slug);
           setCollection(found || null);
         } catch {

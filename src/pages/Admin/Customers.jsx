@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Users, Shield, Mail, Calendar } from 'lucide-react';
 import adminApi from '../../services/adminApi';
+import { toArray } from '../../utils';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
@@ -11,7 +12,7 @@ const Customers = () => {
     setLoading(true);
     try {
       const res = await adminApi.get('/users');
-      setCustomers(res.data.customers || []);
+       setCustomers(toArray(res.data, ['customers']));
     } catch (err) {
       console.error('Failed to fetch customers:', err);
     } finally {

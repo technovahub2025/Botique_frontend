@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 import ProductCard from '../ui/ProductCard';
 import SectionHeading from '../ui/SectionHeading';
 import Button from '../ui/Button';
@@ -16,7 +17,7 @@ const ProductCarousel = ({ title, subtitle, apiParams, showHeading = true }) => 
       setLoading(true);
       try {
         const res = await api.get('/products', { params: apiParams });
-        setProducts(res.data.products || []);
+         setProducts(toArray(res.data, ['products']));
         setError(null);
       } catch (err) {
         setError(err.message);

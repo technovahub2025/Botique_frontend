@@ -51,3 +51,5 @@ export const debounce = (fn, wait) => {
     timeout = setTimeout(() => fn(...args), wait);
   };
 };
+
+export { toArray } from './toArray';

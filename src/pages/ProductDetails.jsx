@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
-import { formatPrice, getEffectivePrice, calculateDiscount } from '../utils';
+import { formatPrice, getEffectivePrice, calculateDiscount, toArray } from '../utils';
 import { getImageUrl } from '../services/imageUrl';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
@@ -53,7 +53,7 @@ const ProductDetails = () => {
           `/products?category=${product.category.slug}&limit=4&status=active`
         );
         setRelatedProducts(
-          (res.data.products || []).filter((p) => p._id !== product._id)
+          toArray(res.data, ['products']).filter((p) => p._id !== product._id)
         );
       } catch {
         setRelatedProducts([]);
@@ -112,7 +112,7 @@ const ProductDetails = () => {
 
   const effectivePrice = getEffectivePrice(product.price, product.salePrice);
   const discount = calculateDiscount(product.price, product.salePrice);
-  const productImages = product.images || [];
+  const productImages = toArray(product.images);
   const currentImage = productImages[selectedImage] || productImages[0];
   const inStock = product.stock > 0;
   const liked = isInWishlist(product._id);

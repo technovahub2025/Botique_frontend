@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Filter, Edit, Trash2, Plus, Eye, MoreVertical } from 'lucide-react';
-import { formatPrice } from '../../utils';
+import { formatPrice, toArray } from '../../utils';
 import adminApi from '../../services/adminApi';
 import { getImageUrl } from '../../services/imageUrl';
 
@@ -28,7 +28,7 @@ const Products = () => {
       if (filter !== 'all') params.set('status', filter);
 
       const res = await adminApi.get(`/products?${params}`);
-      setProducts(res.data.products || []);
+       setProducts(toArray(res.data, ['products']));
       setTotalPages(res.data.pages || 1);
     } catch (err) {
       console.error('Failed to fetch products:', err);

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { getImageUrl } from '../../services/imageUrl';
+import { toArray } from '../../utils';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -24,7 +25,7 @@ const Categories = () => {
       const params = new URLSearchParams({ limit: 100 });
       if (search) params.set('search', search);
       const res = await adminApi.get(`/categories?${params}`);
-      setCategories(res.data.categories || []);
+       setCategories(toArray(res.data, ['categories']));
     } catch (err) {
       console.error('Failed to fetch categories:', err);
     } finally {

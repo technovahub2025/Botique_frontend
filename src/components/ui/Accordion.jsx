@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 const Accordion = ({ items, allowMultiple = false, defaultOpen = [] }) => {
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(Array.isArray(defaultOpen) ? defaultOpen : []);
 
   const toggle = (index) => {
     if (allowMultiple) {

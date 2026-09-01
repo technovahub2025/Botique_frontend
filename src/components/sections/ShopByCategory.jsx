@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { toArray } from '../../utils';
 import CategoryCard from '../ui/CategoryCard';
 import SectionHeading from '../ui/SectionHeading';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
@@ -17,7 +18,7 @@ const ShopByCategory = () => {
       setLoading(true);
       try {
         const res = await api.get('/categories?status=active');
-        setCategories(res.data.categories || []);
+         setCategories(toArray(res.data, ['categories']));
       } catch {
         setCategories([]);
       } finally {
