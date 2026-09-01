@@ -19,7 +19,13 @@ const LookCard = ({ look }) => {
             loading="lazy"
             className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
             onError={(e) => {
-              e.target.src = 'https://placehold.co/600x800/eee/999?text=Look+Image';
+              const img = e.currentTarget;
+              if (img.dataset.triedFallback) {
+                img.style.display = 'none';
+                return;
+              }
+              img.dataset.triedFallback = 'true';
+              img.src = 'https://placehold.co/600x800/eee/999?text=Look+Image';
             }}
           />
         </div>

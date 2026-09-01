@@ -42,9 +42,8 @@ const FeaturedCollection = () => {
   const title = featured.title || collection?.name || 'The Monsoon Reverie';
   const subtitle = featured.subtitle || "Editor's selection";
   const rawImage = collection?.heroImage || collection?.bannerImage;
-  const imageUrl = rawImage
-    ? getImageUrl(rawImage)
-    : 'https://images.unsplash.com/photo-1612817153549-8885942493a7?auto=format&fit=crop&w=1920&q=80';
+  const imageUrl = getImageUrl(rawImage)
+    || 'https://images.unsplash.com/photo-1612817125339-8a4d3b1f5a56?auto=format&fit=crop&w=1920&q=80';
   const description = collection?.description || "A capsule collection of hand-block printed silhouettes in earthy indigos and muted golds, inspired by the monsoon season. Each piece is crafted by artisan cooperatives in Rajasthan.";
   const buttonText = featured.ctaText || 'Explore the Edit';
   const ctaLink = featured.ctaLink || `/shop${collection?.slug ? `?collection=${collection.slug}` : ''}`;
@@ -68,9 +67,15 @@ const FeaturedCollection = () => {
                 alt={title}
                 loading="lazy"
                 className="w-full h-full object-cover object-center"
-                onError={(e) => {
-                  e.target.src = 'https://placehold.co/1920x500/f8f4ec/999';
-                }}
+                 onError={(e) => {
+                   const img = e.currentTarget;
+                   if (img.dataset.triedFallback) {
+                     img.style.display = 'none';
+                     return;
+                   }
+                   img.dataset.triedFallback = 'true';
+                   img.src = 'https://placehold.co/1920x500/f8f4ec/999?text=Featured+Collection';
+                 }}
               />
             </div>
 

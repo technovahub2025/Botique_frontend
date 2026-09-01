@@ -7,6 +7,18 @@ export const toArray = (value, keys = []) => {
     }
   }
 
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    if (trimmed.includes(',')) {
+      return trimmed
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    }
+    return [trimmed];
+  }
+
   return [];
 };
 

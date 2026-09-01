@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Heart, Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Heart, Search, ShoppingCart, User, Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
 import { useWishlist } from '../../hooks/useWishlist';
 import { useSettings } from '../../context/SettingsContext';
 import useClickAway from '../../hooks/useClickAway';
 import api from '../../services/api';
-import { toArray } from '../../utils';
+import { toArray, slugify } from '../../utils';
 
 
 const Header = () => {
@@ -14,11 +14,15 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState([]);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [mobileCategoryOpen, setMobileCategoryOpen] = useState(false);
   const { totalItems: cartItems } = useCart();
   const { items: wishlistItems } = useWishlist();
   const { boutiqueName } = useSettings();
   const location = useLocation();
+  const navigate = useNavigate();
   const searchRef = useClickAway(() => setSearchOpen(false));
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -34,14 +38,38 @@ const Header = () => {
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setCategoryDropdownOpen(false);
   }, [location]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setCategoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`;
+      navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
     }
   };
+
+  const handleCategoryClick = (category) => {
+    const slug = category.slug || slugify(category.name);
+    navigate(`/category/${slug}`);
+    setCategoryDropdownOpen(false);
+  };
+
+  const navLinkClass = ({ isActive }) =>
+    `text-xs font-medium tracking-wider transition-colors ${
+      isActive ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
+    }`;
+
+  const safeCategories = Array.isArray(categories) ? categories : [];
 
   return (
     <header className="bg-ivory border-b border-gray-200 sticky top-0 z-20">
@@ -56,37 +84,47 @@ const Header = () => {
             </button>
 
             <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-              <NavLink
-                to="/shop?newArrival=true"
-                className={({ isActive }) =>
-                  `text-xs font-medium tracking-wider transition-colors ${
-                    isActive ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
-                  }`
-                }
-              >
+              <NavLink to="/shop?newArrival=true" className={navLinkClass}>
                 NEW ARRIVALS
               </NavLink>
-              {categories.map((category) => (
-                <NavLink
-                  key={category._id || category.slug}
-                  to={`/shop?category=${category.slug}`}
-                  className={({ isActive }) =>
-                    `text-xs font-medium tracking-wider transition-colors ${
-                      isActive ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
-                    }`
-                  }
+
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setCategoryDropdownOpen((prev) => !prev)}
+                  className={`flex items-center gap-1 text-xs font-medium tracking-wider transition-colors ${
+                    categoryDropdownOpen ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
+                  }`}
                 >
-                  {category.name.toUpperCase()}
-                </NavLink>
-              ))}
-              <NavLink
-                to="/shop?salePrice=true"
-                className={({ isActive }) =>
-                  `text-xs font-medium tracking-wider transition-colors ${
-                    isActive ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
-                  }`
-                }
-              >
+                  CATEGORY
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+
+                {categoryDropdownOpen && (
+                  <div className="absolute left-0 top-full mt-1 w-48 bg-white border border-gray-200 shadow-lg z-30">
+                    <div className="py-1">
+                      {safeCategories.length === 0 ? (
+                        <span className="block px-4 py-2 text-xs text-gray-500">
+                          No categories available
+                        </span>
+                      ) : (
+                        safeCategories.map((category) => (
+                          <button
+                            key={category._id || category.slug}
+                            type="button"
+                            onClick={() => handleCategoryClick(category)}
+                            className="block w-full text-left px-4 py-2 text-xs font-medium text-charcoal hover:text-burgundy hover:bg-ivory transition-colors"
+                          >
+                            {category.name}
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <NavLink to="/shop?salePrice=true" className={navLinkClass}>
                 SALE
               </NavLink>
             </nav>
@@ -159,20 +197,48 @@ const Header = () => {
             >
               NEW ARRIVALS
             </NavLink>
-            {categories.map((category) => (
-              <NavLink
-                key={category._id || category.slug}
-                to={`/shop?category=${category.slug}`}
-                onClick={() => setMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  `block py-3 text-sm font-medium tracking-wider ${
-                    isActive ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
-                  }`
-                }
-              >
-                {category.name.toUpperCase()}
-              </NavLink>
-            ))}
+
+            <button
+              type="button"
+              onClick={() => setMobileCategoryOpen((prev) => !prev)}
+              className="flex items-center gap-2 w-full text-left py-3 text-sm font-medium tracking-wider text-charcoal hover:text-burgundy"
+            >
+              CATEGORY
+              {mobileCategoryOpen ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+
+            {mobileCategoryOpen && (
+              <div className="pb-2">
+                {safeCategories.length === 0 ? (
+                  <span className="block px-6 py-2 text-xs text-gray-500">
+                    No categories available
+                  </span>
+                ) : (
+                  safeCategories.map((category) => (
+                    <NavLink
+                      key={category._id || category.slug}
+                      to={`/category/${category.slug || slugify(category.name)}`}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setMobileCategoryOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        `block py-2 px-6 text-sm font-medium tracking-wider ${
+                          isActive ? 'text-burgundy' : 'text-charcoal hover:text-burgundy'
+                        }`
+                      }
+                    >
+                      {category.name}
+                    </NavLink>
+                  ))
+                )}
+              </div>
+            )}
+
             <NavLink
               to="/shop?salePrice=true"
               onClick={() => setMobileMenuOpen(false)}

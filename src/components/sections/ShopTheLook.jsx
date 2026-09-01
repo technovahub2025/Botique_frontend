@@ -33,8 +33,8 @@ const ShopTheLook = () => {
         <SectionHeading title={title} subtitle={subtitle} />
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sectionImages
-            .filter((img) => img && img.trim())
+         {sectionImages
+            .filter((img) => img && img.toString().trim())
             .map((img, i) => (
               <LookCard
                 key={`look-${i}`}
@@ -42,7 +42,7 @@ const ShopTheLook = () => {
                   title,
                   description: description || '',
                   tag: 'Featured',
-                  image: img,
+                  image: img.toString().trim(),
                   products: [],
                 }}
               />

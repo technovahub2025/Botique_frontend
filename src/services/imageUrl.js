@@ -6,28 +6,45 @@ const API_ORIGIN = (() => {
   return raw;
 })();
 
-export function getImageUrl(url) {
-  if (!url || typeof url !== 'string') {
+export function getImageUrl(image) {
+  if (!image) {
     return '';
   }
 
-  const trimmed = url.trim();
-  if (
-    trimmed.startsWith('http://') ||
-    trimmed.startsWith('https://') ||
-    trimmed.startsWith('data:') ||
-    trimmed.startsWith('blob:')
-  ) {
+  if (typeof image === 'string') {
+    const trimmed = image.trim();
+    if (!trimmed) return '';
+
+    if (
+      trimmed.startsWith('http://') ||
+      trimmed.startsWith('https://') ||
+      trimmed.startsWith('data:') ||
+      trimmed.startsWith('blob:')
+    ) {
+      return trimmed;
+    }
+
+    if (trimmed.startsWith('/')) {
+      return `${API_ORIGIN}${trimmed}`;
+    }
+
+    if (API_ORIGIN) {
+      return `${API_ORIGIN}/${trimmed}`;
+    }
+
     return trimmed;
   }
 
-  if (trimmed.startsWith('/')) {
-    return `${API_ORIGIN}${trimmed}`;
+  if (typeof image === 'object') {
+    const extracted =
+      image.url ||
+      image.secure_url ||
+      image.src ||
+      image.imageUrl ||
+      '';
+    if (extracted) return getImageUrl(extracted);
+    return '';
   }
 
-  if (API_ORIGIN) {
-    return `${API_ORIGIN}/${trimmed}`;
-  }
-
-  return trimmed;
+  return '';
 }
