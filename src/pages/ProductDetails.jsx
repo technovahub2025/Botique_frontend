@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
@@ -8,6 +8,16 @@ import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import Accordion from '../components/ui/Accordion';
 import ProductCard from '../components/ui/ProductCard';
+
+const ZOOM_LEVELS = [1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+
+const getNextZoom = (current, delta) => {
+  const currentIndex = ZOOM_LEVELS.findIndex((z) => z >= current);
+  const step = delta < 0 ? 1 : -1;
+  let nextIndex = currentIndex + step;
+  nextIndex = Math.max(0, Math.min(ZOOM_LEVELS.length - 1, nextIndex));
+  return ZOOM_LEVELS[nextIndex];
+};
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -23,6 +33,9 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [relatedLoading, setRelatedLoading] = useState(true);
+  const [zoom, setZoom] = useState(1);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+  const viewportRef = useRef(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -65,6 +78,23 @@ const ProductDetails = () => {
       fetchRelated();
     }
   }, [product]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const handleWheel = (event) => {
+      event.preventDefault();
+      const rect = viewport.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const originX = (x / rect.width) * 100;
+      const originY = (y / rect.height) * 100;
+      setZoomOrigin({ x: originX, y: originY });
+      setZoom((prev) => getNextZoom(prev, event.deltaY));
+    };
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+    return () => viewport.removeEventListener('wheel', handleWheel);
+  }, []);
 
   if (loading) {
     return (
@@ -132,14 +162,19 @@ const ProductDetails = () => {
     setSelectedImage((prev) =>
       prev === 0 ? productImages.length - 1 : prev - 1
     );
+    setZoom(1);
+    setZoomOrigin({ x: 50, y: 50 });
   };
 
   const handleNextImage = () => {
     setSelectedImage((prev) =>
       prev === productImages.length - 1 ? 0 : prev + 1
     );
+    setZoom(1);
+    setZoomOrigin({ x: 50, y: 50 });
   };
 
+    
   const accordionItems = [
     {
       title: 'Description',
@@ -191,9 +226,13 @@ const ProductDetails = () => {
           <div className="lg:col-start-1">
             <div className="flex overflow-x-auto lg:flex-col lg:overflow-y-auto gap-2 lg:gap-3 pb-1 lg:pb-0 lg:max-h-[600px]">
               {productImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
+                 <button
+                   key={idx}
+                   onClick={() => {
+                     setSelectedImage(idx);
+                     setZoom(1);
+                     setZoomOrigin({ x: 50, y: 50 });
+                   }}
                   className={`w-16 h-20 lg:w-20 lg:h-24 flex-shrink-0 overflow-hidden border-2 transition-all rounded ${
                     idx === selectedImage
                       ? 'border-charcoal'
@@ -219,12 +258,21 @@ const ProductDetails = () => {
         {/* Main Image: top on mobile, right column on desktop */}
         <div className="relative lg:col-start-2 flex justify-center">
           <div className="w-full max-w-[560px] max-h-[700px] overflow-hidden bg-cream rounded-lg">
-            <div className="aspect-[3/4] overflow-hidden">
+            <div
+              ref={viewportRef}
+              className="aspect-[3/4] overflow-hidden relative"
+            >
               <img
                 src={getImageUrl(currentImage)}
                 alt={product.name}
                 loading="lazy"
                 className="w-full h-full object-contain object-center transition-opacity duration-300"
+                style={{
+                  transform: `scale(${zoom})`,
+                  transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+                  transition: 'transform 150ms ease-out',
+                  cursor: zoom <= 1 ? 'zoom-in' : 'zoom-out',
+                }}
                 onLoad={(e) => { e.target.classList.add('image-loaded'); }}
                 onError={(e) => {
                   e.target.src =
