@@ -16,11 +16,6 @@ const Settings = () => {
       orderPrefix: 'LL',
       autoConfirmOrder: false,
     },
-    inventory: {
-      lowStockThreshold: 5,
-      notifyLowStock: true,
-      allowBackorder: false,
-    },
     notifications: {
       newOrder: true,
       payment: true,
