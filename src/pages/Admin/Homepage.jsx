@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, Upload } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { toArray } from '../../utils';
 import ImageUrlPreview from '../../components/ui/ImageUrlPreview';
+import ImageUploadField from '../../components/ui/ImageUploadField';
 
 const SECTIONS = [
   {
@@ -237,27 +238,31 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                 </div>
               </div>
 
-               {isOpen && (
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Image URL
-                    </label>
-                    <input
-                      type="text"
-                      value={imageUrl}
-                      onChange={(e) => updateSlide(idx, 'imageUrl', e.target.value)}
-                      placeholder="https://..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
-                    />
-                   {imageUrl && (
-                     <ImageUrlPreview
-                       url={imageUrl}
-                       alt={`Slide ${idx + 1} preview`}
-                       className="max-w-[500px]"
+                {isOpen && (
+                 <div className="space-y-3">
+                   <div>
+                     <label className="block text-xs font-medium text-gray-600 mb-1">
+                       Image
+                     </label>
+                     <ImageUploadField
+                       value={imageUrl}
+                       onChange={(url) => updateSlide(idx, 'imageUrl', url)}
                      />
-                   )}
-                   </div>
+                     <input
+                       type="text"
+                       value={imageUrl}
+                       onChange={(e) => updateSlide(idx, 'imageUrl', e.target.value)}
+                       placeholder="Or enter image URL manually"
+                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                     />
+                    {imageUrl && (
+                      <ImageUrlPreview
+                        url={imageUrl}
+                        alt={`Slide ${idx + 1} preview`}
+                        className="max-w-[500px]"
+                      />
+                    )}
+                    </div>
 
                    <div>
                      <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -533,11 +538,19 @@ const PriceCardsEditor = ({ data, onChange }) => {
                     </div>
                   ))}
 
-                  {DEFAULT_CARD_FIELDS.some((f) => f.key === 'imageUrl') && card.imageUrl && (
-                    <div className="mt-2">
-                      <ImageUrlPreview src={card.imageUrl} />
-                    </div>
-                  )}
+                   {DEFAULT_CARD_FIELDS.some((f) => f.key === 'imageUrl') && card.imageUrl && (
+                     <div className="mt-2">
+                       <ImageUrlPreview url={card.imageUrl} alt="Card image" className="max-w-[320px]" />
+                     </div>
+                   )}
+
+                   <div className="mt-2">
+                     <ImageUploadField
+                       value={card.imageUrl || ''}
+                       onChange={(url) => updateCard(idx, 'imageUrl', url)}
+                     />
+                   </div>
+
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -845,11 +858,17 @@ const Homepage = () => {
                         />
                       )}
                       {field.ui === 'image-url' && (
-                        <ImageUrlPreview
-                          url={rawValue ? (typeof rawValue === 'string' ? rawValue : '') : ''}
-                          alt={field.label}
-                          className="max-w-[320px]"
-                        />
+                        <>
+                          <ImageUploadField
+                            value={rawValue}
+                            onChange={(url) => updateField(section.id, field.key, url)}
+                          />
+                          <ImageUrlPreview
+                            url={rawValue ? (typeof rawValue === 'string' ? rawValue : '') : ''}
+                            alt={field.label}
+                            className="max-w-[320px]"
+                          />
+                        </>
                       )}
                     </div>
                   );

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { toArray } from '../../utils';
+import ImageUploadField from '../../components/ui/ImageUploadField';
 
 const Collections = () => {
   const [collections, setCollections] = useState([]);
@@ -191,24 +192,30 @@ const Collections = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hero Image URL</label>
-                <input
-                  type="text"
-                  value={formData.heroImage}
-                  onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Banner Image URL</label>
-                <input
-                  type="text"
-                  value={formData.bannerImage}
-                  onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
+              <ImageUploadField
+                label="Hero Image"
+                value={formData.heroImage}
+                onChange={(url) => setFormData({ ...formData, heroImage: url })}
+              />
+              <input
+                type="text"
+                value={formData.heroImage}
+                onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
+                placeholder="Or enter image URL manually"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+              />
+              <ImageUploadField
+                label="Banner Image"
+                value={formData.bannerImage}
+                onChange={(url) => setFormData({ ...formData, bannerImage: url })}
+              />
+              <input
+                type="text"
+                value={formData.bannerImage}
+                onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
+                placeholder="Or enter image URL manually"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+              />
               <div className="flex gap-4">
                 <label className="flex items-center gap-2">
                   <input

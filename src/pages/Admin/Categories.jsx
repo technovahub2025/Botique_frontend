@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import adminApi from '../../services/adminApi';
-import { getImageUrl } from '../../services/imageUrl';
 import { toArray } from '../../utils';
+import ImageUploadField from '../../components/ui/ImageUploadField';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -195,15 +195,18 @@ const Categories = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                <input
-                  type="text"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
+              <ImageUploadField
+                label="Category Image"
+                value={formData.image}
+                onChange={(url) => setFormData({ ...formData, image: url })}
+              />
+              <input
+                type="text"
+                value={formData.image}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                placeholder="Or enter image URL manually"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+              />
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
                 <input

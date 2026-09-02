@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X, Plus, Trash2 } from 'lucide-react';
+import { Save, X, Plus, Trash2, Upload } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { toArray } from '../../utils';
+import ImageUploadField from '../../components/ui/ImageUploadField';
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -11,6 +12,8 @@ const ProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [uploadError, setUploadError] = useState('');
+  const [uploadingIdx, setUploadingIdx] = useState(null);
   const [categories, setCategories] = useState([]);
   const [collections, setCollections] = useState([]);
   const [sizes, setSizes] = useState(['S', 'M', 'L']);
@@ -119,6 +122,40 @@ const ProductForm = () => {
     const newImages = [...formData.images];
     newImages.splice(index, 1);
     setFormData((prev) => ({ ...prev, images: newImages }));
+  };
+
+  const handleImageUpload = async (index, file) => {
+    if (!file || !file.type.startsWith('image/')) {
+      setUploadError('Only image files are allowed');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Image is too large. Maximum size is 10MB.');
+      return;
+    }
+
+    setUploadingIdx(index);
+    setUploadError('');
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('image', file);
+
+      const res = await adminApi.post('/upload', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (res.data.success) {
+        handleImageChange(index, res.data.url);
+      } else {
+        setUploadError(res.data.message || 'Upload failed');
+      }
+    } catch (err) {
+      setUploadError(err.response?.data?.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploadingIdx(null);
+    }
   };
 
   const addSize = () => {
@@ -394,28 +431,63 @@ const ProductForm = () => {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="font-semibold mb-4">Images & Variants</h2>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
-            {formData.images.map((img, idx) => (
-              <div key={idx} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={img}
-                  onChange={(e) => handleImageChange(idx, e.target.value)}
-                  placeholder={`Image URL ${idx + 1}`}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
-                />
-                {formData.images.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeImageField(idx)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            ))}
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
+             {uploadError && (
+               <p className="text-sm text-red-600 mb-2">{uploadError}</p>
+             )}
+               {formData.images.map((img, idx) => (
+               <div key={idx} className="flex gap-2 mb-2">
+                 <div className="flex-1 space-y-2">
+                   {img && (
+                     <img
+                       src={img}
+                       alt="Product preview"
+                       className="w-16 h-16 object-cover rounded border border-gray-200"
+                     />
+                   )}
+                   <input
+                     type="text"
+                     value={img}
+                     onChange={(e) => handleImageChange(idx, e.target.value)}
+                     placeholder={`Image URL ${idx + 1}`}
+                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
+                   />
+                 </div>
+                  <div className="flex flex-col gap-1">
+                    <label
+                      htmlFor={`product-image-upload-${idx}`}
+                      className="cursor-pointer bg-charcoal text-ivory px-3 py-1.5 rounded-md hover:bg-deep-brown flex items-center justify-center text-sm"
+                    >
+                      {uploadingIdx === idx ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-ivory"></div>
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                    </label>
+                   <input
+                     type="file"
+                     accept="image/jpeg,image/png,image/webp,image/gif"
+                     onChange={(e) => {
+                       const file = e.target.files?.[0];
+                       if (file) handleImageUpload(idx, file);
+                       e.target.value = '';
+                     }}
+                     className="hidden"
+                     id={`product-image-upload-${idx}`}
+                   />
+                 </div>
+                 {formData.images.length > 1 && (
+                   <button
+                     type="button"
+                     onClick={() => removeImageField(idx)}
+                     className="p-2 text-red-600 hover:bg-red-50 rounded"
+                   >
+                     <Trash2 className="w-4 h-4" />
+                   </button>
+                 )}
+               </div>
+             ))}
             <button
               type="button"
               onClick={addImageField}
