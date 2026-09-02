@@ -16,7 +16,8 @@ const parseUrls = (url) => {
 
 const ImageUrlPreview = ({ url, className = '', alt = 'Image preview' }) => {
   const [failed, setFailed] = useState(false);
-  const urls = parseUrls(url);
+
+  const urls = typeof url === 'string' ? parseUrls(url) : [];
 
   if (urls.length === 0 || failed) {
     if (failed && urls.length > 0) {
