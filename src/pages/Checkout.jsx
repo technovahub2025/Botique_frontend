@@ -202,34 +202,6 @@ const DeliveryPaymentStep = ({
         ))}
       </div>
     </div>
-
-    <div>
-      <h3 className="font-semibold mb-2">Coupon Code <span className="text-xs text-gray-500 font-normal">(Optional)</span></h3>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={couponCode}
-          onChange={handleCouponChange}
-          placeholder="Enter coupon code"
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
-        />
-        <button
-          type="button"
-          onClick={handleApplyCoupon}
-          disabled={loading || !couponCode.trim()}
-          className="px-4 py-2 bg-charcoal text-ivory rounded-md hover:bg-deep-brown transition-colors disabled:opacity-50 flex items-center gap-1"
-        >
-          <Tag className="w-4 h-4" />
-          Apply
-        </button>
-      </div>
-      {couponMessage && (
-        <p className={`text-sm mt-2 ${couponMessage.includes('saved') ? 'text-green-600' : 'text-red-600'}`}>
-          {couponMessage}
-        </p>
-      )}
-    </div>
-
     {error && (
       <p className="text-sm text-red-600">{error}</p>
     )}
