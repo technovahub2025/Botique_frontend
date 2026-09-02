@@ -18,6 +18,7 @@ import Homepage from './pages/Admin/Homepage';
 import Settings from './pages/Admin/Settings';
 import AccountLayout from './layouts/AccountLayout';
 import RequireAuth from './components/RequireAuth';
+import ScrollToTop from './components/ScrollToTop';
 
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -46,6 +47,7 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <WishlistProvider>
+          <ScrollToTop />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
