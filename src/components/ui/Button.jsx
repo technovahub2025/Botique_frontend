@@ -1,4 +1,4 @@
-const Button = ({ children, variant = 'primary', size = 'md', onClick, className = '', ...props }) => {
+const Button = ({ children, variant = 'primary', size = 'md', onClick, className = '', as: Component = 'button', ...props }) => {
   const baseClasses =
     'inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2';
 
@@ -23,9 +23,9 @@ const Button = ({ children, variant = 'primary', size = 'md', onClick, className
   const classes = `${baseClasses} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`;
 
   return (
-    <button onClick={onClick} className={classes} {...props}>
+    <Component onClick={onClick} className={classes} {...props}>
       {children}
-    </button>
+    </Component>
   );
 };
 

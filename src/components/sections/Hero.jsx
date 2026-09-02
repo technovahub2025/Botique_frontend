@@ -139,6 +139,39 @@ const Hero = () => {
   const safeIndex = Math.min(activeIndex, slides.length - 1);
   const currentSlide = slides[safeIndex];
 
+  const isExternalLink = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    return /^https?:\/\//i.test(url);
+  };
+
+  const renderCtaButton = (buttonText, buttonLink) => {
+    if (!buttonLink) return null;
+    if (isExternalLink(buttonLink)) {
+      return (
+        <Button
+          as="a"
+          href={buttonLink}
+          variant="primary"
+          size="md"
+          className="bg-gold hover:bg-gold-dark text-charcoal font-medium shadow-lg shadow-black/30"
+        >
+          {buttonText}
+        </Button>
+      );
+    }
+    return (
+      <Button
+        as={Link}
+        to={buttonLink}
+        variant="primary"
+        size="md"
+        className="bg-gold hover:bg-gold-dark text-charcoal font-medium shadow-lg shadow-black/30"
+      >
+        {buttonText}
+      </Button>
+    );
+  };
+
   return (
     <section
       className="relative w-full bg-charcoal text-white"
@@ -223,15 +256,7 @@ const Hero = () => {
           )}
           {(currentSlide.buttonText || currentSlide.buttonLink) && (
             <div className="mt-5">
-              <Button
-                as={Link}
-                to={currentSlide.buttonLink}
-                variant="primary"
-                size="md"
-                className="bg-gold hover:bg-gold-dark text-charcoal font-medium shadow-lg shadow-black/30"
-              >
-                {currentSlide.buttonText}
-              </Button>
+              {renderCtaButton(currentSlide.buttonText, currentSlide.buttonLink)}
             </div>
           )}
         </div>
