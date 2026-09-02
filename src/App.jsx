@@ -32,6 +32,7 @@ import Register from './pages/Register';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import Account from './pages/Account';
+import Story from './pages/Story';
 import Orders from './pages/Account/Orders';
 import OrderDetails from './pages/Account/OrderDetails';
 import About from './pages/About';
@@ -62,6 +63,7 @@ function App() {
               <Route path="cart" element={<Cart />} />
               <Route path="wishlist" element={<Wishlist />} />
               <Route path="about" element={<About />} />
+              <Route path="story" element={<Story />} />
               <Route path="contact" element={<Contact />} />
 
               <Route element={<RequireAuth />}>
