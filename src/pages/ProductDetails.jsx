@@ -49,14 +49,29 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const fetchRelated = async () => {
-      if (!product?.category?.slug) return;
+      if (!product) return;
+
+      const category = product.category;
+      let categoryId = null;
+
+      if (category) {
+        if (typeof category === 'string') {
+          categoryId = category;
+        } else if (typeof category === 'object') {
+          categoryId = category._id || category.id || category.slug || category.name || null;
+        }
+      }
+
+      if (!categoryId) return;
+
       setRelatedLoading(true);
       try {
         const res = await api.get(
-          `/products?category=${product.category.slug}&limit=4&status=active`
+          `/products?category=${categoryId}&limit=4&status=active`
         );
+        const fetchedProducts = toArray(res.data, ['products']);
         setRelatedProducts(
-          toArray(res.data, ['products']).filter((p) => p._id !== product._id)
+          fetchedProducts.filter((p) => p._id !== product._id)
         );
       } catch {
         setRelatedProducts([]);
