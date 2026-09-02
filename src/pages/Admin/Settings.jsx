@@ -186,46 +186,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="font-semibold text-lg mb-4">Inventory Settings</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Low Stock Threshold</label>
-              <input
-                type="number"
-                value={settings.inventory?.lowStockThreshold || 5}
-                onChange={(e) => updateNested('inventory', 'lowStockThreshold', Number(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                min="0"
-              />
-            </div>
-            <div className="flex items-end">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={settings.inventory?.notifyLowStock || false}
-                  onChange={(e) => updateNested('inventory', 'notifyLowStock', e.target.checked)}
-                  className="text-gold focus:ring-gold"
-                />
-                <span className="text-sm text-gray-700">Notify on low stock</span>
-              </label>
-            </div>
-            <div className="flex items-end">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={settings.inventory?.allowBackorder || false}
-                  onChange={(e) => updateNested('inventory', 'allowBackorder', e.target.checked)}
-                  className="text-gold focus:ring-gold"
-                />
-                <span className="text-sm text-gray-700">Allow backorders</span>
-              </label>
-            </div>
-          </div>
-        </div>
       </form>
     </div>
   );
 };
 
 export default Settings;
+

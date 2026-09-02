@@ -12,15 +12,10 @@ const DEFAULT_SETTINGS = {
     currency: 'INR',
     timezone: 'Asia/Kolkata',
   },
-  orders: {
+   orders: {
     orderPrefix: 'LL',
     autoConfirmOrder: true,
     defaultStatus: 'pending',
-  },
-  inventory: {
-    lowStockThreshold: 5,
-    notifyLowStock: false,
-    allowBackorder: false,
   },
   notifications: {
     newOrder: true,
