@@ -51,6 +51,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/orders" element={<Navigate to="/account/orders" replace />} />
 
             <Route element={<MainLayout />}>
               <Route index element={<Home />} />
