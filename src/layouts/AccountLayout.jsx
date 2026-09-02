@@ -1,4 +1,4 @@
-import { NavLink, Outlet, Link } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { Package, MapPin, CreditCard, User, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -29,22 +29,23 @@ const AccountLayout = () => {
       <div className="flex flex-col md:flex-row gap-6">
         <nav className="md:w-64 flex-shrink-0">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-gold text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`
-                }
-              >
-                <item.icon className="w-4 h-4" />
-                {item.label}
-              </NavLink>
-            ))}
+             {navItems.map((item) => (
+               <NavLink
+                 key={item.to}
+                 to={item.to}
+                 end
+                 className={({ isActive }) =>
+                   `flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                     isActive
+                       ? 'bg-gold text-white'
+                       : 'text-gray-700 hover:bg-gray-100'
+                   }`
+                 }
+               >
+                 <item.icon className="w-4 h-4" />
+                 {item.label}
+               </NavLink>
+             ))}
             <button
               onClick={logout}
               className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
