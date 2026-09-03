@@ -54,11 +54,13 @@ const GoogleDriveCard = () => {
   }, []);
 
   const handleConnect = () => {
-    window.location.href = '/api/google-drive/auth';
+    const baseUrl = adminApi.defaults.baseURL || '';
+    window.location.href = `${baseUrl}/google-drive/auth`;
   };
 
   const handleReconnect = () => {
-    window.location.href = '/api/google-drive/auth';
+    const baseUrl = adminApi.defaults.baseURL || '';
+    window.location.href = `${baseUrl}/google-drive/auth`;
   };
 
   const handleTryAgain = () => {
