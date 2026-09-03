@@ -37,7 +37,7 @@ export function getImageUrl(image) {
 
   if (typeof image === 'object') {
     if (image.driveFileId && !image.url) {
-      return `${API_ORIGIN}/api/uploads/drive/${image.driveFileId}`;
+       return `${API_ORIGIN}/api/upload/drive/${image.driveFileId}`;
     }
 
     const extracted =
@@ -45,7 +45,7 @@ export function getImageUrl(image) {
       image.secure_url ||
       image.src ||
       image.imageUrl ||
-      (image.driveFileId ? `${API_ORIGIN}/api/uploads/drive/${image.driveFileId}` : '') ||
+      (image.driveFileId ? `${API_ORIGIN}/api/upload/drive/${image.driveFileId}` : '') ||
       '';
     if (extracted) return getImageUrl(extracted);
     return '';
