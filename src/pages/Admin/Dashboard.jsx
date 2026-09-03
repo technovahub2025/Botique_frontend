@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { formatPrice, toArray } from '../../utils';
 import adminApi from '../../services/adminApi';
+import GoogleDriveCard from '../../components/Admin/GoogleDriveCard';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -44,7 +45,14 @@ const Dashboard = () => {
   }, []);
 
   if (loading) return <p>Loading dashboard...</p>;
-  if (!stats) return <p>No data available.</p>;
+  if (!stats) {
+    return (
+      <div>
+        <h1 className="text-2xl font-heading font-bold mb-6">Admin Dashboard</h1>
+        <GoogleDriveCard />
+      </div>
+    );
+  }
 
   const statCards = [
     {
