@@ -49,7 +49,7 @@ const Dashboard = () => {
     return (
       <div>
         <h1 className="text-2xl font-heading font-bold mb-6">Admin Dashboard</h1>
-        <GoogleDriveCard />
+        <p className="text-sm text-gray-500 mb-4">No dashboard data available.</p>
       </div>
     );
   }
@@ -171,6 +171,10 @@ const Dashboard = () => {
           ))}
           </div>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <GoogleDriveCard />
       </div>
     </div>
   );
