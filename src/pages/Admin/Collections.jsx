@@ -159,83 +159,93 @@ const Collections = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg w-full max-w-lg p-6">
-            <h2 className="text-xl font-heading font-bold mb-4">
-              {editingCollection ? 'Edit Collection' : 'Add Collection'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
-                <input
-                  type="text"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
-              <ImageUploadField
-                label="Hero Image"
-                value={formData.heroImage}
-                onChange={(url) => setFormData({ ...formData, heroImage: url })}
-              />
-              <input
-                type="text"
-                value={formData.heroImage}
-                onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
-                placeholder="Or enter image URL manually"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-              />
-              <ImageUploadField
-                label="Banner Image"
-                value={formData.bannerImage}
-                onChange={(url) => setFormData({ ...formData, bannerImage: url })}
-              />
-              <input
-                type="text"
-                value={formData.bannerImage}
-                onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
-                placeholder="Or enter image URL manually"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-              />
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2">
+          <div className="w-full max-w-lg max-h-[90vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
+
+            {/* Header - fixed */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-heading font-bold">
+                {editingCollection ? 'Edit Collection' : 'Add Collection'}
+              </h2>
+            </div>
+
+            {/* Form body - ONLY THIS PART SCROLLS */}
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
+              <div className="flex-1 overflow-y-auto min-h-0 px-6 py-4 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
                   <input
-                    type="checkbox"
-                    checked={formData.featured}
-                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    className="text-gold focus:ring-gold"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                    required
                   />
-                  <span className="text-sm text-gray-700">Featured</span>
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="ml-auto px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  />
+                </div>
+                <ImageUploadField
+                  label="Hero Image"
+                  value={formData.heroImage}
+                  onChange={(url) => setFormData({ ...formData, heroImage: url })}
+                />
+                <input
+                  type="text"
+                  value={formData.heroImage}
+                  onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
+                  placeholder="Or enter image URL manually"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                />
+                <ImageUploadField
+                  label="Banner Image"
+                  value={formData.bannerImage}
+                  onChange={(url) => setFormData({ ...formData, bannerImage: url })}
+                />
+                <input
+                  type="text"
+                  value={formData.bannerImage}
+                  onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
+                  placeholder="Or enter image URL manually"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                />
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                      className="text-gold focus:ring-gold"
+                    />
+                    <span className="text-sm text-gray-700">Featured</span>
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="ml-auto px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
               </div>
-              <div className="flex justify-end gap-3 pt-4">
+
+              {/* Footer action buttons - fixed at bottom */}
+              <div className="flex-shrink-0 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
