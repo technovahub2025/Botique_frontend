@@ -169,95 +169,117 @@ const Categories = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg w-full max-w-md p-6">
-            <h2 className="text-xl font-heading font-bold mb-4">
-              {editingCategory ? 'Edit Category' : 'Add Category'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+          <div className="w-full max-w-2xl max-h-[90vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
+
+            {/* Header - fixed */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-xl font-heading font-bold">
+                {editingCategory ? 'Edit Category' : 'Add Category'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Form body - ONLY THIS PART SCROLLS */}
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
+              <div className="flex-1 overflow-y-auto min-h-0 px-6 py-4 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  />
+                </div>
+                <ImageUploadField
+                  label="Category Image"
+                  value={formData.image}
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  onMetadataChange={(meta) => setFormData((prev) => ({
+                    ...prev,
+                    imageMetadata: meta || {},
+                  }))}
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  maxSize={10 * 1024 * 1024}
+                  mimeType={formData.imageMetadata?.mimeType || ''}
+                  mediaType="image"
+                />
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  placeholder="Or enter image URL manually"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                  required
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                <ImageUploadField
+                  label="Category Video"
+                  value={formData.video}
+                  onChange={(url) => setFormData({ ...formData, video: url })}
+                  onMetadataChange={(meta) => setFormData((prev) => ({
+                    ...prev,
+                    videoMetadata: meta || {},
+                  }))}
+                  accept="video/mp4,video/webm,video/quicktime,video/ogg"
+                  maxSize={50 * 1024 * 1024}
+                  mimeType={formData.videoMetadata?.mimeType || ''}
+                  mediaType="video"
+                />
                 <input
                   type="text"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  value={formData.video}
+                  onChange={(e) => setFormData({ ...formData, video: e.target.value })}
+                  placeholder="Or enter video URL manually"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                  <input
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
-              <ImageUploadField
-                label="Category Image"
-                value={formData.image}
-                onChange={(url) => setFormData({ ...formData, image: url })}
-                onMetadataChange={(meta) => setFormData((prev) => ({
-                  ...prev,
-                  imageMetadata: meta || {},
-                }))}
-                mimeType={formData.imageMetadata?.mimeType || ''}
-              />
-              <input
-                type="text"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="Or enter image URL manually"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-              />
-              <ImageUploadField
-                label="Category Video"
-                value={formData.video}
-                onChange={(url) => setFormData({ ...formData, video: url })}
-                onMetadataChange={(meta) => setFormData((prev) => ({
-                  ...prev,
-                  videoMetadata: meta || {},
-                }))}
-                accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
-                mimeType={formData.videoMetadata?.mimeType || ''}
-              />
-              <input
-                type="text"
-                value={formData.video}
-                onChange={(e) => setFormData({ ...formData, video: e.target.value })}
-                placeholder="Or enter video URL manually"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-              />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
-                <input
-                  type="number"
-                  value={formData.order}
-                  onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
+
+              {/* Footer action buttons - fixed */}
+              <div className="flex-shrink-0 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -269,7 +291,7 @@ const Categories = () => {
                   type="submit"
                   className="px-4 py-2 bg-charcoal text-ivory rounded-md hover:bg-deep-brown"
                 >
-                  {editingCategory ? 'Update' : 'Create'}
+                  {editingCategory ? 'Save Changes' : 'Create Category'}
                 </button>
               </div>
             </form>

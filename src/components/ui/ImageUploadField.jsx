@@ -12,6 +12,7 @@ const ImageUploadField = ({
   accept = 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime',
   maxSize = 50 * 1024 * 1024,
   mimeType = '',
+  mediaType = 'any',
 }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -28,6 +29,7 @@ const ImageUploadField = ({
   const isImageFile = (file) => {
     return file?.type?.startsWith('image/');
   };
+
   const isVideoUrl = (url) => {
     if (!url) return false;
     return isVideoUrlExt(url);
@@ -35,6 +37,58 @@ const ImageUploadField = ({
 
   const isVideoByMimeType = (mt) => {
     return isVideoMimeType(mt);
+  };
+
+  const getHelpText = () => {
+    if (mediaType === 'image') {
+      return 'Supported: JPG, PNG, WEBP, GIF • Max 10MB';
+    }
+    if (mediaType === 'video') {
+      return 'Supported: MP4, WEBM, MOV, OGG • Max 50MB';
+    }
+    return 'Supported: JPG, PNG, WEBP, GIF, MP4, WEBM, MOV, M4V, OGG, OGV • Max 50MB';
+  };
+
+  const getButtonContent = (isUploading) => {
+    const sizeLabel = mediaType === 'image' ? 'Image' : mediaType === 'video' ? 'Video' : 'Media';
+    if (isUploading) {
+      return (
+        <>
+          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-ivory"></div>
+          Uploading...
+        </>
+      );
+    }
+    return (
+      <>
+        <Upload className="w-3 h-3" />
+        {`Upload ${sizeLabel}`}
+      </>
+    );
+  };
+
+  const validateFile = (file) => {
+    const fileIsImage = isImageFile(file);
+    const fileIsVideo = isVideoFile(file);
+
+    if (mediaType === 'image' && !fileIsImage) {
+      return 'Only image files are allowed.';
+    }
+
+    if (mediaType === 'video' && !fileIsVideo) {
+      return 'Only video files are allowed.';
+    }
+
+    if (!fileIsImage && !fileIsVideo) {
+      return 'Only image or video files are allowed.';
+    }
+
+    if (file.size > maxSize) {
+      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+      return `File is too large. Maximum size is ${maxSizeMB}MB.`;
+    }
+
+    return null;
   };
 
   const handleFileSelect = async (e) => {
@@ -47,28 +101,9 @@ const ImageUploadField = ({
 
     setError('');
 
-    const fileIsImage = isImageFile(file);
-    const fileIsVideo = isVideoFile(file);
-
-    // -----------------------------------------
-    // Validate file type
-    // -----------------------------------------
-    if (!fileIsImage && !fileIsVideo) {
-      setError(
-        'Only image or video files are allowed.'
-      );
-      return;
-    }
-
-    // -----------------------------------------
-    // Validate file size
-    // -----------------------------------------
-    if (file.size > maxSize) {
-      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
-
-      setError(
-        `File is too large. Maximum size is ${maxSizeMB}MB.`
-      );
+    const validationError = validateFile(file);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -78,7 +113,7 @@ const ImageUploadField = ({
     const localPreview = URL.createObjectURL(file);
 
     setPreview(localPreview);
-    setPreviewType(fileIsVideo ? 'video' : 'image');
+    setPreviewType(isVideoFile(file) ? 'video' : 'image');
     setUploading(true);
 
     try {
@@ -179,13 +214,16 @@ const ImageUploadField = ({
               controls
               muted
               playsInline
+              preload="metadata"
               className="w-full max-w-[300px] h-40 object-cover rounded-md border border-gray-200 bg-black"
               onError={() => {
                 setError(
                   'Unable to display this video.'
                 );
               }}
-            />
+            >
+              Your browser does not support video playback.
+            </video>
           ) : (
             <img
               src={displayUrl}
@@ -244,7 +282,11 @@ const ImageUploadField = ({
           </span>
 
           <span className="text-gray-400 text-xs mt-1">
-            Image or Video
+            {mediaType === 'image'
+              ? 'Image'
+              : mediaType === 'video'
+                ? 'Video'
+                : 'Image or Video'}
           </span>
 
         </div>
@@ -276,19 +318,7 @@ const ImageUploadField = ({
           disabled={uploading}
           className="px-3 py-1 bg-charcoal text-ivory text-sm rounded-md hover:bg-deep-brown flex items-center gap-1 disabled:opacity-50"
         >
-          {uploading ? (
-            <>
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-ivory"></div>
-
-              Uploading...
-            </>
-          ) : (
-            <>
-              <Upload className="w-3 h-3" />
-
-              Upload Media
-            </>
-          )}
+          {getButtonContent(uploading)}
         </button>
 
         {displayUrl && (
@@ -320,8 +350,7 @@ const ImageUploadField = ({
 
       {/* Help Text */}
       <p className="text-xs text-gray-500 mt-1">
-        Supported: JPG, PNG, WEBP, GIF, MP4, WEBM, MOV, M4V, OGG, OGV
-        {' '}• Max 50MB
+        {getHelpText()}
       </p>
 
     </div>
