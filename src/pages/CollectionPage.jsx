@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../services/api';
 import ShopView from '../components/sections/ShopView';
+import MediaDisplay from '../components/ui/MediaDisplay';
 import { getImageUrl } from '../services/imageUrl';
 import { toArray } from '../utils';
 
@@ -33,17 +34,32 @@ const CollectionPage = () => {
   return (
     <>
       {collection && (
-        <div
-          className="h-48 md:h-64 bg-cover bg-center flex items-center justify-center text-ivory"
-          style={{
-            backgroundImage: (() => {
-              const raw = collection.heroImage || collection.bannerImage;
-              const src = raw ? getImageUrl(raw) : 'https://placehold.co/1200x400/f8f4ec/999';
-              return `url('${src}')`;
-            })(),
-          }}
-        >
-          <h1 className="font-heading text-3xl md:text-4xl text-center">
+        <div className="relative h-48 md:h-64 bg-cover bg-center flex items-center justify-center text-ivory">
+          {(() => {
+            const raw = collection.heroImage || collection.bannerImage;
+            const mediaUrl = raw ? getImageUrl(raw) : '';
+            const fallbackUrl = 'https://placehold.co/1200x400/f8f4ec/999';
+            const src = mediaUrl || fallbackUrl;
+
+            return (
+              <MediaDisplay
+                src={src}
+                alt={collection.name}
+                loading="lazy"
+                objectFit="object-cover"
+                className="absolute inset-0 w-full h-full"
+                fallback={
+                  <img
+                    src={fallbackUrl}
+                    alt={collection.name}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                }
+              />
+            );
+          })()}
+          <h1 className="relative z-10 font-heading text-3xl md:text-4xl text-center">
             {collection.name}
           </h1>
         </div>

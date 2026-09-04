@@ -5,6 +5,7 @@ import Button from '../ui/Button';
 import SectionHeading from '../ui/SectionHeading';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
 import { getImageUrl } from '../../services/imageUrl';
+import { isVideoUrl } from '../../utils/mediaUtils';
 import api from '../../services/api';
 
 const FeaturedCollection = () => {
@@ -62,21 +63,36 @@ const FeaturedCollection = () => {
 
           <div className="relative overflow-hidden bg-ivory">
             <div className="aspect-[21/9] overflow-hidden">
-              <img
-                src={imageUrl}
-                alt={title}
-                loading="lazy"
-                className="w-full h-full object-cover object-center"
-                 onError={(e) => {
-                   const img = e.currentTarget;
-                   if (img.dataset.triedFallback) {
-                     img.style.display = 'none';
-                     return;
-                   }
-                   img.dataset.triedFallback = 'true';
-                   img.src = 'https://placehold.co/1920x500/f8f4ec/999?text=Featured+Collection';
-                 }}
-              />
+              {isVideoUrl(imageUrl) ? (
+                <video
+                  src={imageUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-cover object-center"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <img
+                  src={imageUrl}
+                  alt={title}
+                  loading="lazy"
+                  className="w-full h-full object-cover object-center"
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    if (img.dataset.triedFallback) {
+                      img.style.display = 'none';
+                      return;
+                    }
+                    img.dataset.triedFallback = 'true';
+                    img.src = 'https://placehold.co/1920x500/f8f4ec/999?text=Featured+Collection';
+                  }}
+                />
+              )}
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
