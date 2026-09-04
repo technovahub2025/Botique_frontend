@@ -35,30 +35,13 @@ const CollectionPage = () => {
     <>
       {collection && (
         <div className="relative h-48 md:h-64 bg-cover bg-center flex items-center justify-center text-ivory">
-          {(() => {
-            const raw = collection.heroImage || collection.bannerImage;
-            const mediaUrl = raw ? getImageUrl(raw) : '';
-            const fallbackUrl = 'https://placehold.co/1200x400/f8f4ec/999';
-            const src = mediaUrl || fallbackUrl;
-
-            return (
-              <MediaDisplay
-                src={src}
-                alt={collection.name}
-                loading="lazy"
-                objectFit="object-cover"
-                className="absolute inset-0 w-full h-full"
-                fallback={
-                  <img
-                    src={fallbackUrl}
-                    alt={collection.name}
-                    loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                }
-              />
-            );
-          })()}
+          <MediaDisplay
+            src={collection.heroImage || collection.bannerImage}
+            alt={collection.name}
+            loading="lazy"
+            objectFit="object-cover"
+            className="absolute inset-0 w-full h-full"
+          />
           <h1 className="relative z-10 font-heading text-3xl md:text-4xl text-center">
             {collection.name}
           </h1>

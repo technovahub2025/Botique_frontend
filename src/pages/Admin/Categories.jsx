@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { toArray } from '../../utils';
+import { getImageUrl } from '../../services/imageUrl';
 import ImageUploadField from '../../components/ui/ImageUploadField';
 
 const Categories = () => {
@@ -15,6 +16,7 @@ const Categories = () => {
     slug: '',
     description: '',
     image: '',
+    video: '',
     status: 'active',
     order: 0,
   });
@@ -47,7 +49,7 @@ const Categories = () => {
       }
       setShowModal(false);
       setEditingCategory(null);
-      setFormData({ name: '', slug: '', description: '', image: '', status: 'active', order: 0 });
+      setFormData({ name: '', slug: '', description: '', image: '', video: '', status: 'active', order: 0 });
       fetchCategories();
     } catch (err) {
       console.error('Failed to save category:', err);
@@ -61,6 +63,7 @@ const Categories = () => {
       slug: category.slug,
       description: category.description || '',
       image: category.image || '',
+      video: category.video || '',
       status: category.status,
       order: category.order || 0,
     });
@@ -205,6 +208,19 @@ const Categories = () => {
                 value={formData.image}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 placeholder="Or enter image URL manually"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+              />
+              <ImageUploadField
+                label="Category Video"
+                value={formData.video}
+                onChange={(url) => setFormData({ ...formData, video: url })}
+                accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+              />
+              <input
+                type="text"
+                value={formData.video}
+                onChange={(e) => setFormData({ ...formData, video: e.target.value })}
+                placeholder="Or enter video URL manually"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
               />
               <div>

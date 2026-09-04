@@ -43,8 +43,10 @@ const FeaturedCollection = () => {
   const title = featured.title || collection?.name || 'The Monsoon Reverie';
   const subtitle = featured.subtitle || "Editor's curated selection";
   const rawImage = featured.image || collection?.heroImage || collection?.bannerImage;
+  const rawVideo = collection?.heroVideo || collection?.bannerVideo;
   const imageUrl = getImageUrl(rawImage)
     || 'https://images.unsplash.com/photo-1612817125339-8a4d3b1f5a56?auto=format&fit=crop&w=1920&q=80';
+  const videoUrl = getImageUrl(rawVideo);
   const description = collection?.description || "A capsule collection of hand-block printed silhouettes in earthy indigos and muted golds, inspired by the monsoon season. Each piece is crafted by artisan cooperatives in Rajasthan.";
   const buttonText = featured.ctaText || 'Explore the Edit';
   const ctaLink = featured.ctaLink || `/shop${collection?.slug ? `?collection=${collection.slug}` : ''}`;
@@ -63,14 +65,15 @@ const FeaturedCollection = () => {
 
           <div className="relative overflow-hidden bg-ivory">
             <div className="aspect-[21/9] overflow-hidden">
-              {isVideoUrl(imageUrl) ? (
+              {isVideoUrl(videoUrl) ? (
                 <video
-                  src={imageUrl}
+                  src={videoUrl}
                   autoPlay
                   muted
                   loop
                   playsInline
                   preload="metadata"
+                  controls={false}
                   className="w-full h-full object-cover object-center"
                   onError={(e) => {
                     e.target.style.display = 'none';

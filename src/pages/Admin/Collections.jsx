@@ -15,7 +15,9 @@ const Collections = () => {
     slug: '',
     description: '',
     heroImage: '',
+    heroVideo: '',
     bannerImage: '',
+    bannerVideo: '',
     featured: false,
     status: 'active',
   });
@@ -48,7 +50,7 @@ const Collections = () => {
       }
       setShowModal(false);
       setEditingCollection(null);
-      setFormData({ name: '', slug: '', description: '', heroImage: '', bannerImage: '', featured: false, status: 'active' });
+      setFormData({ name: '', slug: '', description: '', heroImage: '', heroVideo: '', bannerImage: '', bannerVideo: '', featured: false, status: 'active' });
       fetchCollections();
     } catch (err) {
       console.error('Failed to save collection:', err);
@@ -62,7 +64,9 @@ const Collections = () => {
       slug: collection.slug || '',
       description: collection.description || '',
       heroImage: collection.heroImage || '',
+      heroVideo: collection.heroVideo || '',
       bannerImage: collection.bannerImage || '',
+      bannerVideo: collection.bannerVideo || '',
       featured: collection.featured || false,
       status: collection.status || 'active',
     });
@@ -212,6 +216,19 @@ const Collections = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
                 <ImageUploadField
+                  label="Hero Video"
+                  value={formData.heroVideo}
+                  onChange={(url) => setFormData({ ...formData, heroVideo: url })}
+                  accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                />
+                <input
+                  type="text"
+                  value={formData.heroVideo}
+                  onChange={(e) => setFormData({ ...formData, heroVideo: e.target.value })}
+                  placeholder="Or enter video URL manually"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                />
+                <ImageUploadField
                   label="Banner Image"
                   value={formData.bannerImage}
                   onChange={(url) => setFormData({ ...formData, bannerImage: url })}
@@ -221,6 +238,19 @@ const Collections = () => {
                   value={formData.bannerImage}
                   onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
                   placeholder="Or enter image URL manually"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
+                />
+                <ImageUploadField
+                  label="Banner Video"
+                  value={formData.bannerVideo}
+                  onChange={(url) => setFormData({ ...formData, bannerVideo: url })}
+                  accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                />
+                <input
+                  type="text"
+                  value={formData.bannerVideo}
+                  onChange={(e) => setFormData({ ...formData, bannerVideo: e.target.value })}
+                  placeholder="Or enter video URL manually"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
                 <div className="flex gap-4">

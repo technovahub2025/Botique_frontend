@@ -1,65 +1,49 @@
 import { Link } from 'react-router-dom';
-import { getImageUrl } from '../../services/imageUrl';
-import MediaDisplay from './MediaDisplay';
+import HoverMedia from './HoverMedia';
 
 const CategoryCard = ({ category, imageSize = 'square' }) => {
-  const imageSrc = category.image
-    ? getImageUrl(category.image)
-    : '';
-
-  const sharedImgClass = 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-105';
+  const sharedImgClass = 'transition-transform duration-700 group-hover:scale-105';
   const wideFallback = 'https://placehold.co/800x450/eee/999?text=No+Image';
   const squareFallback = 'https://placehold.co/600x600/eee/999?text=No+Image';
-
-  const renderMedia = () => (
-    <MediaDisplay
-      src={imageSrc}
-      alt={category.name}
-      loading="lazy"
-      objectFit="object-cover"
-      className="transition-transform duration-700 group-hover:scale-105"
-      fallback={
-        <img
-          src={imageSize === 'wide' ? wideFallback : squareFallback}
-          alt={category.name}
-          loading="lazy"
-          className={sharedImgClass}
-        />
-      }
-      onError={(e) => {
-        const img = e.currentTarget;
-        if (!img.dataset.triedFallback) {
-          img.dataset.triedFallback = 'true';
-          img.src = imageSize === 'wide' ? wideFallback : squareFallback;
-        }
-      }}
-    />
-  );
 
   return (
     <Link to={`/shop?category=${category.slug}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
         {imageSize === 'wide' ? (
           <div className="aspect-[16/9] overflow-hidden">
-            {imageSrc ? renderMedia() : (
-              <img
-                src={wideFallback}
-                alt={category.name}
-                loading="lazy"
-                className={sharedImgClass}
-              />
-            )}
+            <HoverMedia
+              image={category.image}
+              video={category.video}
+              alt={category.name}
+              imageClassName={sharedImgClass}
+              videoClassName={sharedImgClass}
+              fallback={
+                <img
+                  src={wideFallback}
+                  alt={category.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              }
+            />
           </div>
         ) : (
           <div className="aspect-square overflow-hidden">
-            {imageSrc ? renderMedia() : (
-              <img
-                src={squareFallback}
-                alt={category.name}
-                loading="lazy"
-                className={sharedImgClass}
-              />
-            )}
+            <HoverMedia
+              image={category.image}
+              video={category.video}
+              alt={category.name}
+              imageClassName={sharedImgClass}
+              videoClassName={sharedImgClass}
+              fallback={
+                <img
+                  src={squareFallback}
+                  alt={category.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              }
+            />
           </div>
         )}
       </div>
