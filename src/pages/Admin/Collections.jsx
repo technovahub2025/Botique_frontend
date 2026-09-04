@@ -167,13 +167,20 @@ const Collections = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg max-h-[90vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
+          <div className="w-full max-w-3xl max-h-[90vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
 
             {/* Header - fixed */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-xl font-heading font-bold">
                 {editingCollection ? 'Edit Collection' : 'Add Collection'}
               </h2>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
             </div>
 
             {/* Form body - ONLY THIS PART SCROLLS */}
@@ -215,7 +222,10 @@ const Collections = () => {
                     ...prev,
                     heroImageMetadata: meta || {},
                   }))}
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  maxSize={10 * 1024 * 1024}
                   mimeType={formData.heroImageMetadata?.mimeType || ''}
+                  mediaType="image"
                 />
                 <input
                   type="text"
@@ -232,8 +242,10 @@ const Collections = () => {
                     ...prev,
                     heroVideoMetadata: meta || {},
                   }))}
-                  accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                  accept="video/mp4,video/webm,video/quicktime,video/ogg"
+                  maxSize={50 * 1024 * 1024}
                   mimeType={formData.heroVideoMetadata?.mimeType || ''}
+                  mediaType="video"
                 />
                 <input
                   type="text"
@@ -250,7 +262,10 @@ const Collections = () => {
                     ...prev,
                     bannerImageMetadata: meta || {},
                   }))}
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  maxSize={10 * 1024 * 1024}
                   mimeType={formData.bannerImageMetadata?.mimeType || ''}
+                  mediaType="image"
                 />
                 <input
                   type="text"
@@ -267,8 +282,10 @@ const Collections = () => {
                     ...prev,
                     bannerVideoMetadata: meta || {},
                   }))}
-                  accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                  accept="video/mp4,video/webm,video/quicktime,video/ogg"
+                  maxSize={50 * 1024 * 1024}
                   mimeType={formData.bannerVideoMetadata?.mimeType || ''}
+                  mediaType="video"
                 />
                 <input
                   type="text"
@@ -311,7 +328,7 @@ const Collections = () => {
                   type="submit"
                   className="px-4 py-2 bg-charcoal text-ivory rounded-md hover:bg-deep-brown"
                 >
-                  {editingCollection ? 'Update' : 'Create'}
+                  {editingCollection ? 'Save Changes' : 'Create Collection'}
                 </button>
               </div>
             </form>
