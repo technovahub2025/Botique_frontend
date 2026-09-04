@@ -10,6 +10,8 @@ const HoverMedia = ({
   containerClassName = '',
   imageClassName = '',
   videoClassName = '',
+  objectFit = 'object-cover',
+  fallback = null,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef(null);
@@ -45,7 +47,7 @@ const HoverMedia = ({
     }
   };
 
-  const baseMediaClass = 'w-full h-full object-cover object-center';
+  const baseMediaClass = `w-full h-full ${objectFit}`;
 
   return (
     <div
@@ -63,9 +65,11 @@ const HoverMedia = ({
           }`}
         />
       ) : (
-        <div className={`${baseMediaClass} bg-gray-100 flex items-center justify-center ${imageClassName}`}>
-          <span className="text-gray-400 text-sm">No image</span>
-        </div>
+        fallback || (
+          <div className={`${baseMediaClass} bg-gray-100 flex items-center justify-center ${imageClassName}`}>
+            <span className="text-gray-400 text-sm">No image</span>
+          </div>
+        )
       )}
 
       {hasVideo && (

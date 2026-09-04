@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Upload, X, AlertCircle, Image as ImageIcon, Video } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { getImageUrl } from '../../services/imageUrl';
+import { isVideoUrl as isVideoUrlUtil } from '../../utils/mediaUtils';
 
 const ImageUploadField = ({
   label,
@@ -29,13 +30,7 @@ const ImageUploadField = ({
 
   const isVideoUrl = (url) => {
     if (!url) return false;
-
-    return (
-      url.includes('.mp4') ||
-      url.includes('.webm') ||
-      url.includes('.mov') ||
-      url.includes('video/')
-    );
+    return isVideoUrlUtil(url);
   };
 
   const handleFileSelect = async (e) => {
@@ -321,7 +316,7 @@ const ImageUploadField = ({
 
       {/* Help Text */}
       <p className="text-xs text-gray-500 mt-1">
-        Supported: JPG, PNG, WEBP, GIF, MP4, WEBM, MOV
+        Supported: JPG, PNG, WEBP, GIF, MP4, WEBM, MOV, M4V, OGG, OGV
         {' '}• Max 50MB
       </p>
 

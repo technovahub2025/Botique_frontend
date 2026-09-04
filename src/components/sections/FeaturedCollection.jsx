@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Button from '../ui/Button';
 import SectionHeading from '../ui/SectionHeading';
+import HoverMedia from '../ui/HoverMedia';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
-import { getImageUrl } from '../../services/imageUrl';
-import { isVideoUrl } from '../../utils/mediaUtils';
 import api from '../../services/api';
 
 const FeaturedCollection = () => {
@@ -44,9 +43,7 @@ const FeaturedCollection = () => {
   const subtitle = featured.subtitle || "Editor's curated selection";
   const rawImage = featured.image || collection?.heroImage || collection?.bannerImage;
   const rawVideo = collection?.heroVideo || collection?.bannerVideo;
-  const imageUrl = getImageUrl(rawImage)
-    || 'https://images.unsplash.com/photo-1612817125339-8a4d3b1f5a56?auto=format&fit=crop&w=1920&q=80';
-  const videoUrl = getImageUrl(rawVideo);
+  const fallbackImageUrl = 'https://images.unsplash.com/photo-1612817125339-8a4d3b1f5a56?auto=format&fit=crop&w=1920&q=80';
   const description = collection?.description || "A capsule collection of hand-block printed silhouettes in earthy indigos and muted golds, inspired by the monsoon season. Each piece is crafted by artisan cooperatives in Rajasthan.";
   const buttonText = featured.ctaText || 'Explore the Edit';
   const ctaLink = featured.ctaLink || `/shop${collection?.slug ? `?collection=${collection.slug}` : ''}`;
@@ -65,37 +62,31 @@ const FeaturedCollection = () => {
 
           <div className="relative overflow-hidden bg-ivory">
             <div className="aspect-[21/9] overflow-hidden">
-              {isVideoUrl(videoUrl) ? (
-                <video
-                  src={videoUrl}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  controls={false}
-                  className="w-full h-full object-cover object-center"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
-              ) : (
-                <img
-                  src={imageUrl}
-                  alt={title}
-                  loading="lazy"
-                  className="w-full h-full object-cover object-center"
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    if (img.dataset.triedFallback) {
-                      img.style.display = 'none';
-                      return;
-                    }
-                    img.dataset.triedFallback = 'true';
-                    img.src = 'https://placehold.co/1920x500/f8f4ec/999?text=Featured+Collection';
-                  }}
-                />
-              )}
+              <HoverMedia
+                image={rawImage}
+                video={rawVideo}
+                alt={title}
+                objectFit="object-cover object-center"
+                imageClassName="w-full h-full"
+                videoClassName="absolute inset-0 w-full h-full"
+                fallback={
+                  <img
+                    src={fallbackImageUrl}
+                    alt={title}
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      if (img.dataset.triedFallback) {
+                        img.style.display = 'none';
+                        return;
+                      }
+                      img.dataset.triedFallback = 'true';
+                      img.src = 'https://placehold.co/1920x500/f8f4ec/999?text=Featured+Collection';
+                    }}
+                  />
+                }
+              />
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />

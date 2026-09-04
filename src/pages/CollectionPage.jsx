@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../services/api';
 import ShopView from '../components/sections/ShopView';
-import MediaDisplay from '../components/ui/MediaDisplay';
-import { getImageUrl } from '../services/imageUrl';
+import HoverMedia from '../components/ui/HoverMedia';
 import { toArray } from '../utils';
 
 const CollectionPage = () => {
@@ -34,13 +33,15 @@ const CollectionPage = () => {
   return (
     <>
       {collection && (
-        <div className="relative h-48 md:h-64 bg-cover bg-center flex items-center justify-center text-ivory">
-          <MediaDisplay
-            src={collection.heroImage || collection.bannerImage}
+        <div className="relative h-48 md:h-64 flex items-center justify-center text-ivory">
+          <HoverMedia
+            image={collection.heroImage || collection.bannerImage}
+            video={collection.heroVideo || collection.bannerVideo}
             alt={collection.name}
-            loading="lazy"
             objectFit="object-cover"
-            className="absolute inset-0 w-full h-full"
+            containerClassName="absolute inset-0"
+            imageClassName="w-full h-full"
+            videoClassName="absolute inset-0 w-full h-full"
           />
           <h1 className="relative z-10 font-heading text-3xl md:text-4xl text-center">
             {collection.name}
