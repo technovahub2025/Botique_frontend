@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import HoverMedia from './HoverMedia';
+import AutoMediaCarousel from './AutoMediaCarousel';
 
 const CollectionCard = ({ collection, size = 'medium' }) => {
   const sizeClasses = {
@@ -9,24 +9,13 @@ const CollectionCard = ({ collection, size = 'medium' }) => {
     square: 'aspect-square',
   };
 
-  const sharedImgClass = 'w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105';
-
   const heroVideoMimeType = collection.heroVideoMetadata?.mimeType || '';
   const bannerVideoMimeType = collection.bannerVideoMetadata?.mimeType || '';
-
-  console.log('Collection media:', {
-    heroImage: collection.heroImage,
-    heroVideo: collection.heroVideo,
-    bannerImage: collection.bannerImage,
-    bannerVideo: collection.bannerVideo,
-    heroVideoMimeType,
-    bannerVideoMimeType,
-  });
 
   return (
     <Link to={`/shop?collection=${collection.slug}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        <HoverMedia
+        <AutoMediaCarousel
           image={collection.heroImage || collection.bannerImage}
           video={collection.heroVideo || collection.bannerVideo}
           videoMimeType={heroVideoMimeType || bannerVideoMimeType}
@@ -40,7 +29,7 @@ const CollectionCard = ({ collection, size = 'medium' }) => {
               src="https://placehold.co/800x1000/eee/999?text=No+Image"
               alt={collection.name}
               loading="lazy"
-              className={sharedImgClass}
+              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
             />
           }
         />

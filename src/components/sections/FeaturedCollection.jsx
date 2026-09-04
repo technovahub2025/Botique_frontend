@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Button from '../ui/Button';
 import SectionHeading from '../ui/SectionHeading';
-import HoverMedia from '../ui/HoverMedia';
+import AutoMediaCarousel from '../ui/AutoMediaCarousel';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
 import api from '../../services/api';
 
@@ -62,14 +62,15 @@ const FeaturedCollection = () => {
 
           <div className="relative overflow-hidden bg-ivory">
             <div className="aspect-[21/9] overflow-hidden">
-              <HoverMedia
-                image={rawImage}
-                video={rawVideo}
-                alt={title}
-                objectFit="object-cover object-center"
-                imageClassName="w-full h-full"
-                videoClassName="absolute inset-0 w-full h-full"
-                fallback={
+                <AutoMediaCarousel
+                  image={rawImage}
+                  video={rawVideo}
+                  videoMimeType={collection?.heroVideoMetadata?.mimeType || collection?.bannerVideoMetadata?.mimeType || ''}
+                  alt={title}
+                  objectFit="object-cover object-center"
+                  imageClassName="w-full h-full"
+                  videoClassName="w-full h-full"
+                  fallback={
                   <img
                     src={fallbackImageUrl}
                     alt={title}

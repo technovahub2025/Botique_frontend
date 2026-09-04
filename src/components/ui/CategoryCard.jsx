@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import HoverMedia from './HoverMedia';
+import AutoMediaCarousel from './AutoMediaCarousel';
 
 const CategoryCard = ({ category, imageSize = 'square' }) => {
   const sharedImgClass = 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-105';
@@ -9,7 +9,7 @@ const CategoryCard = ({ category, imageSize = 'square' }) => {
   const videoMimeType = category.videoMetadata?.mimeType || '';
 
   const renderMedia = (fallbackSrc) => (
-    <HoverMedia
+    <AutoMediaCarousel
       image={category.image}
       video={category.video}
       videoMimeType={videoMimeType}
