@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Button from '../ui/Button';
 import SectionHeading from '../ui/SectionHeading';
-import AutoMediaCarousel from '../ui/AutoMediaCarousel';
+import AutoMedia from '../common/AutoMedia';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
 import api from '../../services/api';
 
@@ -61,32 +61,14 @@ const FeaturedCollection = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-burgundy/5 to-transparent" />
 
           <div className="relative overflow-hidden bg-ivory">
-            <div className="aspect-[21/9] overflow-hidden">
-                <AutoMediaCarousel
-                  image={rawImage}
-                  video={rawVideo}
-                  videoMimeType={collection?.heroVideoMetadata?.mimeType || collection?.bannerVideoMetadata?.mimeType || ''}
-                  alt={title}
-                  objectFit="object-cover object-center"
-                  imageClassName="w-full h-full"
-                  videoClassName="w-full h-full"
-                  fallback={
-                  <img
-                    src={fallbackImageUrl}
-                    alt={title}
-                    loading="lazy"
-                    className="w-full h-full object-cover object-center"
-                    onError={(e) => {
-                      const img = e.currentTarget;
-                      if (img.dataset.triedFallback) {
-                        img.style.display = 'none';
-                        return;
-                      }
-                      img.dataset.triedFallback = 'true';
-                      img.src = 'https://placehold.co/1920x500/f8f4ec/999?text=Featured+Collection';
-                    }}
-                  />
-                }
+            <div className="aspect-[21/9]">
+              <AutoMedia
+                image={rawImage}
+                video={rawVideo}
+                videoMimeType={collection?.heroVideoMetadata?.mimeType || collection?.bannerVideoMetadata?.mimeType || ''}
+                alt={title}
+                objectFit="object-cover object-center"
+                className="w-full h-full"
               />
             </div>
 

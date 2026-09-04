@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import AutoMediaCarousel from './AutoMediaCarousel';
+import AutoMedia from '../common/AutoMedia';
 
 const CollectionCard = ({ collection, size = 'medium' }) => {
   const sizeClasses = {
@@ -15,23 +15,13 @@ const CollectionCard = ({ collection, size = 'medium' }) => {
   return (
     <Link to={`/shop?collection=${collection.slug}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        <AutoMediaCarousel
+        <AutoMedia
           image={collection.heroImage || collection.bannerImage}
           video={collection.heroVideo || collection.bannerVideo}
           videoMimeType={heroVideoMimeType || bannerVideoMimeType}
           alt={collection.name}
           objectFit="object-cover object-center"
-          containerClassName={sizeClasses[size] || sizeClasses.medium}
-          imageClassName="transition-transform duration-700 group-hover:scale-105"
-          videoClassName="transition-transform duration-700 group-hover:scale-105"
-          fallback={
-            <img
-              src="https://placehold.co/800x1000/eee/999?text=No+Image"
-              alt={collection.name}
-              loading="lazy"
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-            />
-          }
+          className={sizeClasses[size] || sizeClasses.medium}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute bottom-4 left-4 right-4 text-ivory opacity-0 group-hover:opacity-100 transition-opacity duration-300">
