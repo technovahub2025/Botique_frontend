@@ -15,9 +15,13 @@ const Collections = () => {
     slug: '',
     description: '',
     heroImage: '',
+    heroImageMetadata: {},
     heroVideo: '',
+    heroVideoMetadata: {},
     bannerImage: '',
+    bannerImageMetadata: {},
     bannerVideo: '',
+    bannerVideoMetadata: {},
     featured: false,
     status: 'active',
   });
@@ -207,6 +211,11 @@ const Collections = () => {
                   label="Hero Image"
                   value={formData.heroImage}
                   onChange={(url) => setFormData({ ...formData, heroImage: url })}
+                  onMetadataChange={(meta) => setFormData((prev) => ({
+                    ...prev,
+                    heroImageMetadata: meta || {},
+                  }))}
+                  mimeType={formData.heroImageMetadata?.mimeType || ''}
                 />
                 <input
                   type="text"
@@ -219,7 +228,12 @@ const Collections = () => {
                   label="Hero Video"
                   value={formData.heroVideo}
                   onChange={(url) => setFormData({ ...formData, heroVideo: url })}
+                  onMetadataChange={(meta) => setFormData((prev) => ({
+                    ...prev,
+                    heroVideoMetadata: meta || {},
+                  }))}
                   accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                  mimeType={formData.heroVideoMetadata?.mimeType || ''}
                 />
                 <input
                   type="text"
@@ -232,6 +246,11 @@ const Collections = () => {
                   label="Banner Image"
                   value={formData.bannerImage}
                   onChange={(url) => setFormData({ ...formData, bannerImage: url })}
+                  onMetadataChange={(meta) => setFormData((prev) => ({
+                    ...prev,
+                    bannerImageMetadata: meta || {},
+                  }))}
+                  mimeType={formData.bannerImageMetadata?.mimeType || ''}
                 />
                 <input
                   type="text"
@@ -244,7 +263,12 @@ const Collections = () => {
                   label="Banner Video"
                   value={formData.bannerVideo}
                   onChange={(url) => setFormData({ ...formData, bannerVideo: url })}
+                  onMetadataChange={(meta) => setFormData((prev) => ({
+                    ...prev,
+                    bannerVideoMetadata: meta || {},
+                  }))}
                   accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                  mimeType={formData.bannerVideoMetadata?.mimeType || ''}
                 />
                 <input
                   type="text"

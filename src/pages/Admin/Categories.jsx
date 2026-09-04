@@ -16,7 +16,9 @@ const Categories = () => {
     slug: '',
     description: '',
     image: '',
+    imageMetadata: {},
     video: '',
+    videoMetadata: {},
     status: 'active',
     order: 0,
   });
@@ -63,7 +65,9 @@ const Categories = () => {
       slug: category.slug,
       description: category.description || '',
       image: category.image || '',
+      imageMetadata: category.imageMetadata || {},
       video: category.video || '',
+      videoMetadata: category.videoMetadata || {},
       status: category.status,
       order: category.order || 0,
     });
@@ -202,6 +206,11 @@ const Categories = () => {
                 label="Category Image"
                 value={formData.image}
                 onChange={(url) => setFormData({ ...formData, image: url })}
+                onMetadataChange={(meta) => setFormData((prev) => ({
+                  ...prev,
+                  imageMetadata: meta || {},
+                }))}
+                mimeType={formData.imageMetadata?.mimeType || ''}
               />
               <input
                 type="text"
@@ -214,7 +223,12 @@ const Categories = () => {
                 label="Category Video"
                 value={formData.video}
                 onChange={(url) => setFormData({ ...formData, video: url })}
+                onMetadataChange={(meta) => setFormData((prev) => ({
+                  ...prev,
+                  videoMetadata: meta || {},
+                }))}
                 accept="video/mp4,video/webm,video/quicktime,.mov,.m4v,.ogg,.ogv"
+                mimeType={formData.videoMetadata?.mimeType || ''}
               />
               <input
                 type="text"

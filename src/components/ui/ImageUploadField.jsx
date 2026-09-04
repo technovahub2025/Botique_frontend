@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { Upload, X, AlertCircle, Image as ImageIcon, Video } from 'lucide-react';
 import adminApi from '../../services/adminApi';
 import { getImageUrl } from '../../services/imageUrl';
-import { isVideoUrl as isVideoUrlUtil } from '../../utils/mediaUtils';
+import { isVideoUrl as isVideoUrlExt, isVideoMimeType } from '../../utils/mediaUtils';
 
 const ImageUploadField = ({
   label,
@@ -11,6 +11,7 @@ const ImageUploadField = ({
   onMetadataChange,
   accept = 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime',
   maxSize = 50 * 1024 * 1024,
+  mimeType = '',
 }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -27,10 +28,13 @@ const ImageUploadField = ({
   const isImageFile = (file) => {
     return file?.type?.startsWith('image/');
   };
-
   const isVideoUrl = (url) => {
     if (!url) return false;
-    return isVideoUrlUtil(url);
+    return isVideoUrlExt(url);
+  };
+
+  const isVideoByMimeType = (mt) => {
+    return isVideoMimeType(mt);
   };
 
   const handleFileSelect = async (e) => {
@@ -150,7 +154,7 @@ const ImageUploadField = ({
   const displayingVideo =
     preview
       ? previewType === 'video'
-      : isVideoUrl(mediaUrl);
+      : (isVideoByMimeType(mimeType) || isVideoUrl(mediaUrl));
 
   return (
     <div className="mb-4">

@@ -6,10 +6,13 @@ const CategoryCard = ({ category, imageSize = 'square' }) => {
   const wideFallback = 'https://placehold.co/800x450/eee/999?text=No+Image';
   const squareFallback = 'https://placehold.co/600x600/eee/999?text=No+Image';
 
+  const videoMimeType = category.videoMetadata?.mimeType || '';
+
   const renderMedia = (fallbackSrc) => (
     <HoverMedia
       image={category.image}
       video={category.video}
+      videoMimeType={videoMimeType}
       alt={category.name}
       objectFit="object-cover"
       imageClassName="transition-transform duration-700 group-hover:scale-105"

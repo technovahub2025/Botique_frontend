@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { getImageUrl } from '../../services/imageUrl';
-import { isVideoUrl } from '../../utils/mediaUtils';
+import { isVideoMedia } from '../../utils/mediaUtils';
 
 const HoverMedia = ({
   image,
   video,
+  videoMimeType,
   alt = 'Media',
   className = '',
   containerClassName = '',
@@ -18,7 +19,8 @@ const HoverMedia = ({
 
   const imageUrl = image ? getImageUrl(image) : '';
   const videoUrl = video ? getImageUrl(video) : '';
-  const hasVideo = Boolean(videoUrl) && isVideoUrl(videoUrl);
+
+  const hasVideo = Boolean(videoUrl) && isVideoMedia(videoUrl, videoMimeType);
 
   useEffect(() => {
     return () => {

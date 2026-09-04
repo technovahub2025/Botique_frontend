@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getImageUrl } from '../../services/imageUrl';
+import { isVideoUrl, isVideoMimeType } from '../../utils/mediaUtils';
 
 const parseUrls = (url) => {
   if (!url || typeof url !== 'string') return [];
@@ -16,22 +17,6 @@ const parseUrls = (url) => {
   }
 
   return [trimmed];
-};
-
-// Detect video from the URL
-const isVideoUrl = (url) => {
-  if (!url || typeof url !== 'string') return false;
-
-  const cleanUrl = url.toLowerCase().split('?')[0].split('#')[0];
-
-  return (
-    cleanUrl.endsWith('.mp4') ||
-    cleanUrl.endsWith('.webm') ||
-    cleanUrl.endsWith('.mov') ||
-    cleanUrl.endsWith('.m4v') ||
-    cleanUrl.endsWith('.ogg') ||
-    cleanUrl.endsWith('.ogv')
-  );
 };
 
 const ImageUrlPreview = ({
@@ -84,7 +69,7 @@ const ImageUrlPreview = ({
          * Otherwise detect from the URL extension.
          */
         const isVideo =
-          mimeType?.startsWith('video/') ||
+          isVideoMimeType(mimeType) ||
           isVideoUrl(singleUrl);
 
         return (
