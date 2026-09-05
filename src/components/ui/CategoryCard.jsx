@@ -2,8 +2,14 @@ import { Link } from 'react-router-dom';
 import AutoMedia from '../common/AutoMedia';
 
 const CategoryCard = ({ category, imageSize = 'square' }) => {
+  const sizeClasses = {
+    wide: 'aspect-[16/9]',
+    square: 'aspect-square',
+  };
   const wideFallback = 'https://placehold.co/800x450/eee/999?text=No+Image';
   const squareFallback = 'https://placehold.co/600x600/eee/999?text=No+Image';
+
+  if (!category) return null;
 
   const videoMimeType = category.videoMetadata?.mimeType || '';
 

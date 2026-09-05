@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import AutoMedia from '../common/AutoMedia';
 
 const CollectionCard = ({ collection, size = 'medium' }) => {
+  if (!collection) return null;
+
   const sizeClasses = {
     small: 'aspect-[3/4]',
     medium: 'aspect-[2/3]',
