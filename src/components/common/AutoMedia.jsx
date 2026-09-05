@@ -1,120 +1,63 @@
-import { useState, useRef, useEffect } from 'react';
-import { getImageUrl } from '../../services/imageUrl';
-import { isVideoMedia } from '../../utils/mediaUtils';
 
-const AutoMedia = ({
-  image,
-  video,
-  videoMimeType = '',
-  alt = 'Media',
-  className = '',
-  objectFit = 'object-cover',
-  fallbackText = 'No media available',
-}) => {
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const videoRef = useRef(null);
-  const timerRef = useRef(null);
+import { Link } from 'react-router-dom';
+import AutoMedia from '../common/AutoMedia';
 
-  const imageUrl = image ? getImageUrl(image) : '';
-  const videoUrl = video ? getImageUrl(video) : '';
-
-  const hasVideo = Boolean(videoUrl) && !videoFailed && isVideoMedia(videoUrl, videoMimeType);
-
-  useEffect(() => {
-    if (!hasVideo) {
-      setShowVideo(false);
-      return;
-    }
-
-    if (!showVideo) {
-      timerRef.current = setTimeout(() => {
-        setShowVideo(true);
-      }, 4000);
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [showVideo, hasVideo]);
-
-  useEffect(() => {
-    if (!hasVideo) return;
-
-    if (showVideo && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch((err) => {
-        console.error('Auto video playback failed:', err);
-      });
-    }
-  }, [showVideo, hasVideo]);
-
-  const handleVideoEnd = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-    setShowVideo(false);
+const CategoryCard = ({ category, imageSize = 'square' }) => {
+  const sizeClasses = {
+    wide: 'aspect-[16/9]',
+    square: 'aspect-square',
   };
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-      if (videoRef.current) {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-      }
-    };
-  }, []);
-
-  const baseMediaClass = `absolute inset-0 w-full h-full ${objectFit}`;
+  const videoMimeType = category.videoMetadata?.mimeType || '';
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt={alt}
-          loading="lazy"
-          className={`${baseMediaClass} transition-opacity duration-700 ${
-            hasVideo && showVideo ? 'opacity-0' : 'opacity-100'
-          }`}
+    <Link
+      to={`/shop?category=${category.slug}`}
+      className="group block"
+    >
+      <div className="relative overflow-hidden bg-cream">
+        <AutoMedia
+          image={category.image}
+          video={category.video}
+          videoMimeType={videoMimeType}
+          alt={category.name}
+          objectFit="object-cover object-center"
+          className={sizeClasses[imageSize] || sizeClasses.square}
+          fallbackText="No image"
         />
-      ) : (
-        <div className={`${baseMediaClass} bg-gray-100 flex items-center justify-center`}>
-          <span className="text-gray-400 text-sm">{fallbackText}</span>
-        </div>
-      )}
 
-      {hasVideo && (
-        <video
-          ref={videoRef}
-          src={videoUrl}
-          muted
-          autoPlay
-          playsInline
-          preload="metadata"
-          controls={false}
-          onEnded={handleVideoEnd}
-          onError={() => {
-            setVideoFailed(true);
-            if (import.meta.env.DEV) {
-              console.error('Video failed to load:', videoUrl);
-            }
-          }}
-          className={`${baseMediaClass} transition-opacity duration-700 ${
-            showVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
-        />
-      )}
-    </div>
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+        {/* Category information */}
+        <div className="absolute bottom-4 left-4 right-4 text-ivory opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <h3 className="font-heading text-xl font-medium">
+            {category.name}
+          </h3>
+
+          {category.description && (
+            <p className="text-sm text-gray-300 mt-1 line-clamp-2">
+              {category.description}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Text below card */}
+      <div className="mt-3 text-center">
+        <h3 className="font-heading text-lg font-medium text-charcoal group-hover:text-burgundy transition-colors">
+          {category.name}
+        </h3>
+
+        {category.description && (
+          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+            {category.description}
+          </p>
+        )}
+      </div>
+    </Link>
   );
 };
 
-export default AutoMedia;
+export default CategoryCard;
+
