@@ -14,7 +14,7 @@ const CategoryCard = ({ category, imageSize = 'square' }) => {
           video={category.video}
           videoMimeType={videoMimeType}
           alt={category.name}
-          objectFit="object-cover"
+          objectFit="object-contain object-center"
           className={imageSize === 'wide' ? 'aspect-[16/9]' : 'aspect-square'}
           fallbackText="No image"
         />
