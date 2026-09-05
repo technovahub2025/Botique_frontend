@@ -2,40 +2,22 @@ import { Link } from 'react-router-dom';
 import AutoMedia from '../common/AutoMedia';
 
 const CategoryCard = ({ category, imageSize = 'square' }) => {
-  const sizeClasses = {
-    wide: 'aspect-[16/9]',
-    square: 'aspect-square',
-  };
-  const wideFallback = 'https://placehold.co/800x450/eee/999?text=No+Image';
-  const squareFallback = 'https://placehold.co/600x600/eee/999?text=No+Image';
-
   if (!category) return null;
 
   const videoMimeType = category.videoMetadata?.mimeType || '';
 
-  const renderMedia = (fallbackSrc) => (
-    <AutoMedia
-      image={category.image}
-      video={category.video}
-      videoMimeType={videoMimeType}
-      alt={category.name}
-      objectFit="object-cover"
-      fallbackText="No image"
-    />
-  );
-
   return (
     <Link to={`/shop?category=${category.slug}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        {imageSize === 'wide' ? (
-          <div className="aspect-[16/9]">
-            {renderMedia(wideFallback)}
-          </div>
-        ) : (
-          <div className="aspect-square">
-            {renderMedia(squareFallback)}
-          </div>
-        )}
+        <AutoMedia
+          image={category.image}
+          video={category.video}
+          videoMimeType={videoMimeType}
+          alt={category.name}
+          objectFit="object-cover"
+          className={imageSize === 'wide' ? 'aspect-[16/9]' : 'aspect-square'}
+          fallbackText="No image"
+        />
       </div>
       <div className="mt-3 text-center">
         <h3 className="font-heading text-lg font-medium text-charcoal group-hover:text-burgundy transition-colors">

@@ -61,16 +61,14 @@ const FeaturedCollection = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-burgundy/5 to-transparent" />
 
           <div className="relative overflow-hidden bg-ivory">
-            <div className="aspect-[21/9]">
-              <AutoMedia
-                image={rawImage}
-                video={rawVideo}
-                videoMimeType={collection?.heroVideoMetadata?.mimeType || collection?.bannerVideoMetadata?.mimeType || ''}
-                alt={title}
-                objectFit="object-cover object-center"
-                className="w-full h-full"
-              />
-            </div>
+            <AutoMedia
+              image={rawImage}
+              video={rawVideo}
+              videoMimeType={collection?.heroVideoMetadata?.mimeType || collection?.bannerVideoMetadata?.mimeType || ''}
+              alt={title}
+              objectFit="object-cover object-center"
+              className="aspect-[21/9]"
+            />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 

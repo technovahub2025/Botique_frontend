@@ -34,14 +34,14 @@ const CollectionPage = () => {
     <>
       {collection && (
         <div className="relative h-48 md:h-64 flex items-center justify-center text-ivory">
-          <AutoMedia
-            image={collection.heroImage || collection.bannerImage}
-            video={collection.heroVideo || collection.bannerVideo}
-            videoMimeType={collection.heroVideoMetadata?.mimeType || collection.bannerVideoMetadata?.mimeType || ''}
-            alt={collection.name}
-            objectFit="object-cover"
-            className="absolute inset-0 w-full h-full"
-          />
+           <AutoMedia
+             image={collection.heroImage || collection.bannerImage}
+             video={collection.heroVideo || collection.bannerVideo}
+             videoMimeType={collection.heroVideoMetadata?.mimeType || collection.bannerVideoMetadata?.mimeType || ''}
+             alt={collection.name}
+             objectFit="object-cover"
+             className="absolute inset-0 w-full h-full"
+           />
           <h1 className="relative z-10 font-heading text-3xl md:text-4xl text-center">
             {collection.name}
           </h1>
