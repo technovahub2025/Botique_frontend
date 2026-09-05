@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import { formatPrice, toArray } from '../../utils';
 import adminApi from '../../services/adminApi';
-import GoogleDriveCard from '../../components/Admin/GoogleDriveCard';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -171,10 +170,6 @@ const Dashboard = () => {
           ))}
           </div>
         </div>
-      </div>
-
-      <div className="mt-6">
-        <GoogleDriveCard />
       </div>
     </div>
   );

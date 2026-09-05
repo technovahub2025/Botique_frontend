@@ -1,71 +1,8 @@
-import { useState, useEffect } from 'react';
 import { HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, ExternalLink } from 'lucide-react';
-import adminApi from '../../services/adminApi';
+import useGoogleDriveStatus from '../../hooks/useGoogleDriveStatus';
 
 const GoogleDriveCard = () => {
-  const [status, setStatus] = useState({
-    loading: true,
-    configured: false,
-    connected: false,
-    email: null,
-    folderAccessible: false,
-    folderId: null,
-    error: null,
-  });
-
-  const fetchStatus = async () => {
-    setStatus((prev) => ({
-      ...prev,
-      loading: true,
-      error: null,
-    }));
-
-    try {
-      const res = await adminApi.get('/google-drive/status');
-
-      if (res.data.success) {
-        setStatus({
-          loading: false,
-          configured: res.data.configured || false,
-          connected: res.data.connected || false,
-          email: res.data.email || null,
-          folderAccessible: res.data.folderAccessible || false,
-          folderId: res.data.folderId || null,
-          error: null,
-        });
-      } else {
-        setStatus((prev) => ({
-          ...prev,
-          loading: false,
-          error: res.data.message || 'Failed to check Google Drive status',
-        }));
-      }
-    } catch (err) {
-      setStatus((prev) => ({
-        ...prev,
-        loading: false,
-        error: err.response?.data?.message || 'Unable to check Google Drive connection',
-      }));
-    }
-  };
-
-  useEffect(() => {
-    fetchStatus();
-  }, []);
-
-  const handleConnect = () => {
-    const baseUrl = adminApi.defaults.baseURL || '';
-    window.location.href = `${baseUrl}/google-drive/auth`;
-  };
-
-  const handleReconnect = () => {
-    const baseUrl = adminApi.defaults.baseURL || '';
-    window.location.href = `${baseUrl}/google-drive/auth`;
-  };
-
-  const handleTryAgain = () => {
-    fetchStatus();
-  };
+  const { status, fetchStatus, handleConnect } = useGoogleDriveStatus();
 
   const getConnectButtonLabel = () => {
     if (!status.configured) return 'Configure Required';
@@ -114,7 +51,7 @@ const GoogleDriveCard = () => {
         </div>
         <p className="text-sm text-gray-500 mb-4">Unable to check connection.</p>
         <button
-          onClick={handleTryAgain}
+          onClick={() => fetchStatus()}
           className="px-3 py-1 bg-charcoal text-ivory text-sm rounded-md hover:bg-deep-brown flex items-center gap-1"
         >
           <RefreshCw className="w-3 h-3" />
@@ -181,9 +118,9 @@ const GoogleDriveCard = () => {
       </div>
 
       <button
-        onClick={status.connected ? handleReconnect : handleConnect}
-        disabled={getConnectButtonDisabled()}
-        title={getConnectButtonTitle()}
+        onClick={status.connected ? handleConnect : handleConnect}
+        disabled={status.loading || !status.configured}
+        title={!status.configured ? 'Google Drive OAuth is not configured on the server. Contact your system administrator.' : null}
         className="w-full px-3 py-2 bg-charcoal text-ivory text-sm rounded-md hover:bg-deep-brown flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status.connected ? (
