@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import AutoMedia from '../common/AutoMedia';
+import AutoMediaNatural from '../common/AutoMediaNatural';
 
 const CategoryCard = ({ category, imageSize = 'square' }) => {
   if (!category) return null;
@@ -9,13 +9,11 @@ const CategoryCard = ({ category, imageSize = 'square' }) => {
   return (
     <Link to={`/shop?category=${category.slug}`} className="group block">
       <div className="relative overflow-hidden bg-cream">
-        <AutoMedia
+        <AutoMediaNatural
           image={category.image}
           video={category.video}
           videoMimeType={videoMimeType}
           alt={category.name}
-          objectFit="object-contain object-center"
-          className={imageSize === 'wide' ? 'aspect-[16/9]' : 'aspect-square'}
           fallbackText="No image"
         />
       </div>
