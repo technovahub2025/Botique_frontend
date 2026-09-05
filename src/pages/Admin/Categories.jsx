@@ -224,7 +224,7 @@ const Categories = () => {
                     ...prev,
                     imageMetadata: meta || {},
                   }))}
-                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
                   maxSize={10 * 1024 * 1024}
                   mimeType={formData.imageMetadata?.mimeType || ''}
                   mediaType="image"

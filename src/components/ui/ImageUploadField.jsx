@@ -9,7 +9,7 @@ const ImageUploadField = ({
   value,
   onChange,
   onMetadataChange,
-  accept = 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime',
+  accept = 'image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp,image/tiff,video/mp4,video/webm,video/quicktime',
   maxSize = 50 * 1024 * 1024,
   mimeType = '',
   mediaType = 'any',

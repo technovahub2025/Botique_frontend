@@ -222,7 +222,7 @@ const Collections = () => {
                     ...prev,
                     heroImageMetadata: meta || {},
                   }))}
-                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
                   maxSize={10 * 1024 * 1024}
                   mimeType={formData.heroImageMetadata?.mimeType || ''}
                   mediaType="image"
@@ -262,7 +262,7 @@ const Collections = () => {
                     ...prev,
                     bannerImageMetadata: meta || {},
                   }))}
-                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
                   maxSize={10 * 1024 * 1024}
                   mimeType={formData.bannerImageMetadata?.mimeType || ''}
                   mediaType="image"

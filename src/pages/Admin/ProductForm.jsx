@@ -467,7 +467,7 @@ const ProductForm = () => {
                     </label>
                    <input
                      type="file"
-                     accept="image/jpeg,image/png,image/webp,image/gif"
+                      accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
                      onChange={(e) => {
                        const file = e.target.files?.[0];
                        if (file) handleImageUpload(idx, file);
