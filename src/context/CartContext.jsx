@@ -169,6 +169,8 @@ export const CartProvider = ({ children }) => {
               id: `${product._id}-${selectedSize || ''}`,
               product,
               quantity,
+              price: product?.price,
+              salePrice: product?.salePrice,
               selectedSize,
             },
           ];

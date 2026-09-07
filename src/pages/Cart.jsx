@@ -1,25 +1,29 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth';
 import { formatPrice, getEffectivePrice } from '../utils';
 import { getImageUrl } from '../services/imageUrl';
 
 const Cart = () => {
    const {
-    items,
-    removeItem,
-    updateQuantity,
-    clearCart,
-    totalItems,
-    subtotal,
-    shipping,
-    tax,
-    totalPrice,
-    loading,
-    updatingIds,
-    error,
-    clearError,
-  } = useCart();
+     items,
+     removeItem,
+     updateQuantity,
+     clearCart,
+     totalItems,
+     subtotal,
+     shipping,
+     tax,
+     totalPrice,
+     loading,
+     updatingIds,
+     error,
+     clearError,
+   } = useCart();
+
+   const navigate = useNavigate();
+   const { user, token } = useAuth();
 
   if (loading) {
     return (
@@ -177,12 +181,19 @@ const Cart = () => {
           >
             Clear Cart
           </button>
-          <Link
-            to="/checkout"
+          <button
+            type="button"
+            onClick={() => {
+              if (!user || !token) {
+                navigate('/login', { state: { from: '/checkout' } });
+              } else {
+                navigate('/checkout');
+              }
+            }}
             className="flex-1 bg-charcoal text-ivory py-2 rounded font-medium hover:bg-deep-brown text-center transition-colors"
           >
             Proceed to Checkout
-          </Link>
+          </button>
         </div>
       </div>
     </div>
