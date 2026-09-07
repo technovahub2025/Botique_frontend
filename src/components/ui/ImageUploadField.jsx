@@ -9,7 +9,8 @@ const ImageUploadField = ({
   value,
   onChange,
   onMetadataChange,
-  accept = 'image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp,image/tiff,video/mp4,video/webm,video/quicktime',
+  onRemove,
+  accept = 'image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp,image/tiff,video/mp4,video/webm,video/quicktime,video/ogg,video/x-m4v,video/ogv',
   maxSize = 50 * 1024 * 1024,
   mimeType = '',
   mediaType = 'any',
@@ -172,7 +173,18 @@ const ImageUploadField = ({
     fileInputRef.current?.click();
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    if (onRemove) {
+      try {
+        await onRemove();
+      } catch (err) {
+        console.error('Failed to remove media:', err);
+        if (!window.confirm('Failed to remove file from storage. Remove locally anyway?')) {
+          return;
+        }
+      }
+    }
+
     onChange('');
 
     if (onMetadataChange) {

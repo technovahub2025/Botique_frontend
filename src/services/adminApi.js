@@ -53,3 +53,16 @@ adminApi.interceptors.response.use(
 );
 
 export default adminApi;
+
+export const deleteMedia = async (driveFileId) => {
+  if (!driveFileId) return { success: true, message: 'No file ID provided' };
+  try {
+    const res = await adminApi.delete(`/upload/${driveFileId}`);
+    return res.data;
+  } catch (err) {
+    if (err.response?.status === 404) {
+      return { success: true, message: 'File already deleted' };
+    }
+    throw err;
+  }
+};

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, Upload } from 'lucide-react';
-import adminApi from '../../services/adminApi';
+import adminApi, { deleteMedia } from '../../services/adminApi';
 import { toArray } from '../../utils';
 import ImageUrlPreview from '../../components/ui/ImageUrlPreview';
 import ImageUploadField from '../../components/ui/ImageUploadField';
@@ -125,10 +125,11 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
       const current = Array.isArray(prev) ? prev : [];
       return [
         ...current,
-        {
-          id: crypto.randomUUID(),
-          imageUrl: '',
-          smallLabel: '',
+         {
+           id: crypto.randomUUID(),
+           imageUrl: '',
+           imageMetadata: {},
+           smallLabel: '',
           heading: data.heading || globalDefaults.heading || '',
           description: data.description || globalDefaults.description || '',
           buttonText: data.ctaText || globalDefaults.ctaText || '',
@@ -179,8 +180,9 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
       <div className="space-y-4">
         {slides.map((slide, idx) => {
           const isObj = slide && typeof slide === 'object';
-          const imageUrl = isObj ? (slide.imageUrl || slide.image || '') : slide;
-          const smallLabel = isObj ? (slide.smallLabel || '') : '';
+           const imageUrl = isObj ? (slide.imageUrl || slide.image || '') : slide;
+           const imageMetadata = isObj ? (slide.imageMetadata || {}) : {};
+           const smallLabel = isObj ? (slide.smallLabel || '') : '';
           const heading = isObj ? (slide.heading || '') : '';
           const description = isObj ? (slide.description || '') : '';
           const buttonText = isObj ? (slide.buttonText || '') : '';
@@ -244,10 +246,17 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                      <label className="block text-xs font-medium text-gray-600 mb-1">
                        Image
                      </label>
-                     <ImageUploadField
-                       value={imageUrl}
-                       onChange={(url) => updateSlide(idx, 'imageUrl', url)}
-                     />
+                      <ImageUploadField
+                        value={imageUrl}
+                        onChange={(url) => updateSlide(idx, 'imageUrl', url)}
+                        onMetadataChange={(meta) => updateSlide(idx, 'imageMetadata', meta || {})}
+                        onRemove={async () => {
+                          const driveFileId = imageMetadata?.driveFileId;
+                          if (driveFileId) {
+                            await deleteMedia(driveFileId);
+                          }
+                        }}
+                      />
                      <input
                        type="text"
                        value={imageUrl}
@@ -419,6 +428,7 @@ const PriceCardsEditor = ({ data, onChange }) => {
           maxPrice: 0,
           link: '',
           imageUrl: '',
+          imageMetadata: {},
           order: nextOrder,
           enabled: true,
         },
@@ -463,9 +473,10 @@ const PriceCardsEditor = ({ data, onChange }) => {
       </label>
       <div className="space-y-4">
         {cards.map((card, idx) => {
-          const cardOrder = card?.order || idx + 1;
-          const cardEnabled = card?.enabled !== undefined ? card.enabled : true;
-          const isOpen = expandedCards[idx] || false;
+           const cardOrder = card?.order || idx + 1;
+           const cardEnabled = card?.enabled !== undefined ? card.enabled : true;
+           const isOpen = expandedCards[idx] || false;
+           const cardImageMetadata = card?.imageMetadata || {};
 
           return (
             <div
@@ -544,12 +555,19 @@ const PriceCardsEditor = ({ data, onChange }) => {
                      </div>
                    )}
 
-                   <div className="mt-2">
-                     <ImageUploadField
-                       value={card.imageUrl || ''}
-                       onChange={(url) => updateCard(idx, 'imageUrl', url)}
-                     />
-                   </div>
+                    <div className="mt-2">
+                      <ImageUploadField
+                        value={card.imageUrl || ''}
+                        onChange={(url) => updateCard(idx, 'imageUrl', url)}
+                        onMetadataChange={(meta) => updateCard(idx, 'imageMetadata', meta || {})}
+                        onRemove={async () => {
+                          const driveFileId = cardImageMetadata?.driveFileId;
+                          if (driveFileId) {
+                            await deleteMedia(driveFileId);
+                          }
+                        }}
+                      />
+                    </div>
 
 
                   <div className="grid grid-cols-2 gap-3">
@@ -862,6 +880,14 @@ const Homepage = () => {
                           <ImageUploadField
                             value={rawValue}
                             onChange={(url) => updateField(section.id, field.key, url)}
+                            onMetadataChange={(meta) => updateField(section.id, `${field.key}Metadata`, meta || {})}
+                            onRemove={async () => {
+                              const meta = data[`${field.key}Metadata`] || {};
+                              const driveFileId = meta?.driveFileId;
+                              if (driveFileId) {
+                                await deleteMedia(driveFileId);
+                              }
+                            }}
                           />
                           <ImageUrlPreview
                             url={rawValue ? (typeof rawValue === 'string' ? rawValue : '') : ''}

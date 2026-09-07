@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import adminApi from '../../services/adminApi';
+import adminApi, { deleteMedia } from '../../services/adminApi';
 import { toArray } from '../../utils';
 import ImageUploadField from '../../components/ui/ImageUploadField';
 
@@ -54,7 +54,7 @@ const Collections = () => {
       }
       setShowModal(false);
       setEditingCollection(null);
-      setFormData({ name: '', slug: '', description: '', heroImage: '', heroVideo: '', bannerImage: '', bannerVideo: '', featured: false, status: 'active' });
+      setFormData({ name: '', slug: '', description: '', heroImage: '', heroImageMetadata: {}, heroVideo: '', heroVideoMetadata: {}, bannerImage: '', bannerImageMetadata: {}, bannerVideo: '', bannerVideoMetadata: {}, featured: false, status: 'active' });
       fetchCollections();
     } catch (err) {
       console.error('Failed to save collection:', err);
@@ -68,9 +68,13 @@ const Collections = () => {
       slug: collection.slug || '',
       description: collection.description || '',
       heroImage: collection.heroImage || '',
+      heroImageMetadata: collection.heroImageMetadata || {},
       heroVideo: collection.heroVideo || '',
+      heroVideoMetadata: collection.heroVideoMetadata || {},
       bannerImage: collection.bannerImage || '',
+      bannerImageMetadata: collection.bannerImageMetadata || {},
       bannerVideo: collection.bannerVideo || '',
+      bannerVideoMetadata: collection.bannerVideoMetadata || {},
       featured: collection.featured || false,
       status: collection.status || 'active',
     });
@@ -214,19 +218,25 @@ const Collections = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                   />
                 </div>
-                <ImageUploadField
-                  label="Hero Image"
-                  value={formData.heroImage}
-                  onChange={(url) => setFormData({ ...formData, heroImage: url })}
-                  onMetadataChange={(meta) => setFormData((prev) => ({
-                    ...prev,
-                    heroImageMetadata: meta || {},
-                  }))}
-                  accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
-                  maxSize={10 * 1024 * 1024}
-                  mimeType={formData.heroImageMetadata?.mimeType || ''}
-                  mediaType="image"
-                />
+                 <ImageUploadField
+                   label="Hero Image"
+                   value={formData.heroImage}
+                   onChange={(url) => setFormData({ ...formData, heroImage: url })}
+                   onMetadataChange={(meta) => setFormData((prev) => ({
+                     ...prev,
+                     heroImageMetadata: meta || {},
+                   }))}
+                   onRemove={async () => {
+                     const driveFileId = formData.heroImageMetadata?.driveFileId;
+                     if (driveFileId) {
+                       await deleteMedia(driveFileId);
+                     }
+                   }}
+                   accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
+                   maxSize={10 * 1024 * 1024}
+                   mimeType={formData.heroImageMetadata?.mimeType || ''}
+                   mediaType="image"
+                 />
                 <input
                   type="text"
                   value={formData.heroImage}
@@ -234,19 +244,25 @@ const Collections = () => {
                   placeholder="Or enter image URL manually"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
-                <ImageUploadField
-                  label="Hero Video"
-                  value={formData.heroVideo}
-                  onChange={(url) => setFormData({ ...formData, heroVideo: url })}
-                  onMetadataChange={(meta) => setFormData((prev) => ({
-                    ...prev,
-                    heroVideoMetadata: meta || {},
-                  }))}
-                  accept="video/mp4,video/webm,video/quicktime,video/ogg"
-                  maxSize={50 * 1024 * 1024}
-                  mimeType={formData.heroVideoMetadata?.mimeType || ''}
-                  mediaType="video"
-                />
+                 <ImageUploadField
+                   label="Hero Video"
+                   value={formData.heroVideo}
+                   onChange={(url) => setFormData({ ...formData, heroVideo: url })}
+                   onMetadataChange={(meta) => setFormData((prev) => ({
+                     ...prev,
+                     heroVideoMetadata: meta || {},
+                   }))}
+                   onRemove={async () => {
+                     const driveFileId = formData.heroVideoMetadata?.driveFileId;
+                     if (driveFileId) {
+                       await deleteMedia(driveFileId);
+                     }
+                   }}
+                   accept="video/mp4,video/webm,video/quicktime,video/ogg"
+                   maxSize={50 * 1024 * 1024}
+                   mimeType={formData.heroVideoMetadata?.mimeType || ''}
+                   mediaType="video"
+                 />
                 <input
                   type="text"
                   value={formData.heroVideo}
@@ -254,19 +270,25 @@ const Collections = () => {
                   placeholder="Or enter video URL manually"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
-                <ImageUploadField
-                  label="Banner Image"
-                  value={formData.bannerImage}
-                  onChange={(url) => setFormData({ ...formData, bannerImage: url })}
-                  onMetadataChange={(meta) => setFormData((prev) => ({
-                    ...prev,
-                    bannerImageMetadata: meta || {},
-                  }))}
-                  accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
-                  maxSize={10 * 1024 * 1024}
-                  mimeType={formData.bannerImageMetadata?.mimeType || ''}
-                  mediaType="image"
-                />
+                 <ImageUploadField
+                   label="Banner Image"
+                   value={formData.bannerImage}
+                   onChange={(url) => setFormData({ ...formData, bannerImage: url })}
+                   onMetadataChange={(meta) => setFormData((prev) => ({
+                     ...prev,
+                     bannerImageMetadata: meta || {},
+                   }))}
+                   onRemove={async () => {
+                     const driveFileId = formData.bannerImageMetadata?.driveFileId;
+                     if (driveFileId) {
+                       await deleteMedia(driveFileId);
+                     }
+                   }}
+                   accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp"
+                   maxSize={10 * 1024 * 1024}
+                   mimeType={formData.bannerImageMetadata?.mimeType || ''}
+                   mediaType="image"
+                 />
                 <input
                   type="text"
                   value={formData.bannerImage}
@@ -274,19 +296,25 @@ const Collections = () => {
                   placeholder="Or enter image URL manually"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
-                <ImageUploadField
-                  label="Banner Video"
-                  value={formData.bannerVideo}
-                  onChange={(url) => setFormData({ ...formData, bannerVideo: url })}
-                  onMetadataChange={(meta) => setFormData((prev) => ({
-                    ...prev,
-                    bannerVideoMetadata: meta || {},
-                  }))}
-                  accept="video/mp4,video/webm,video/quicktime,video/ogg"
-                  maxSize={50 * 1024 * 1024}
-                  mimeType={formData.bannerVideoMetadata?.mimeType || ''}
-                  mediaType="video"
-                />
+                 <ImageUploadField
+                   label="Banner Video"
+                   value={formData.bannerVideo}
+                   onChange={(url) => setFormData({ ...formData, bannerVideo: url })}
+                   onMetadataChange={(meta) => setFormData((prev) => ({
+                     ...prev,
+                     bannerVideoMetadata: meta || {},
+                   }))}
+                   onRemove={async () => {
+                     const driveFileId = formData.bannerVideoMetadata?.driveFileId;
+                     if (driveFileId) {
+                       await deleteMedia(driveFileId);
+                     }
+                   }}
+                   accept="video/mp4,video/webm,video/quicktime,video/ogg"
+                   maxSize={50 * 1024 * 1024}
+                   mimeType={formData.bannerVideoMetadata?.mimeType || ''}
+                   mediaType="video"
+                 />
                 <input
                   type="text"
                   value={formData.bannerVideo}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import adminApi from '../../services/adminApi';
+import adminApi, { deleteMedia } from '../../services/adminApi';
 import { toArray } from '../../utils';
 import { getImageUrl } from '../../services/imageUrl';
 import ImageUploadField from '../../components/ui/ImageUploadField';
@@ -368,28 +368,34 @@ const Categories = () => {
                 </div>
 
                 {/* Category Image */}
-                <ImageUploadField
-                  label="Category Image"
-                  value={formData.image}
-                  onChange={(url) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      image: url || '',
-                    }))
-                  }
-                  onMetadataChange={(meta) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      imageMetadata: meta || {},
-                    }))
-                  }
-                  accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp,image/tiff"
-                  maxSize={10 * 1024 * 1024}
-                  mimeType={
-                    formData?.imageMetadata?.mimeType || ''
-                  }
-                  mediaType="image"
-                />
+                 <ImageUploadField
+                   label="Category Image"
+                   value={formData.image}
+                   onChange={(url) =>
+                     setFormData((prev) => ({
+                       ...prev,
+                       image: url || '',
+                     }))
+                   }
+                   onMetadataChange={(meta) =>
+                     setFormData((prev) => ({
+                       ...prev,
+                       imageMetadata: meta || {},
+                     }))
+                   }
+                   onRemove={async () => {
+                     const driveFileId = formData.imageMetadata?.driveFileId;
+                     if (driveFileId) {
+                       await deleteMedia(driveFileId);
+                     }
+                   }}
+                   accept="image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp,image/tiff"
+                   maxSize={10 * 1024 * 1024}
+                   mimeType={
+                     formData?.imageMetadata?.mimeType || ''
+                   }
+                   mediaType="image"
+                 />
 
                 {/* Manual Image URL */}
                 <input
@@ -405,29 +411,35 @@ const Categories = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold"
                 />
 
-                {/* Category Video */}
-                <ImageUploadField
-                  label="Category Video"
-                  value={formData.video}
-                  onChange={(url) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      video: url || '',
-                    }))
-                  }
-                  onMetadataChange={(meta) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      videoMetadata: meta || {},
-                    }))
-                  }
-                  accept="video/mp4,video/webm,video/quicktime,video/ogg"
-                  maxSize={50 * 1024 * 1024}
-                  mimeType={
-                    formData?.videoMetadata?.mimeType || ''
-                  }
-                  mediaType="video"
-                />
+                 {/* Category Video */}
+                 <ImageUploadField
+                   label="Category Video"
+                   value={formData.video}
+                   onChange={(url) =>
+                     setFormData((prev) => ({
+                       ...prev,
+                       video: url || '',
+                     }))
+                   }
+                   onMetadataChange={(meta) =>
+                     setFormData((prev) => ({
+                       ...prev,
+                       videoMetadata: meta || {},
+                     }))
+                   }
+                   onRemove={async () => {
+                     const driveFileId = formData.videoMetadata?.driveFileId;
+                     if (driveFileId) {
+                       await deleteMedia(driveFileId);
+                     }
+                   }}
+                   accept="video/mp4,video/webm,video/quicktime,video/ogg"
+                   maxSize={50 * 1024 * 1024}
+                   mimeType={
+                     formData?.videoMetadata?.mimeType || ''
+                   }
+                   mediaType="video"
+                 />
 
                 {/* Manual Video URL */}
                 <input
