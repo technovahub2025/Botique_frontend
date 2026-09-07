@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Package, Calendar, User, MapPin, CreditCard, ChevronRight } from 'lucide-react';
-import { formatPrice, toArray } from '../../utils';
+import { formatPrice, formatDate, toArray } from '../../utils';
 import adminApi from '../../services/adminApi';
 
 const STATUS_COLORS = {
@@ -117,6 +117,7 @@ const Orders = () => {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="text-left p-3 font-medium">Order #</th>
+                  <th className="text-left p-3 font-medium">Date</th>
                   <th className="text-left p-3 font-medium">Customer</th>
                   <th className="text-center p-3 font-medium">Items</th>
                   <th className="text-right p-3 font-medium">Total</th>
@@ -127,7 +128,7 @@ const Orders = () => {
               <tbody>
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="p-4 text-center text-gray-500">
+                    <td colSpan="7" className="p-4 text-center text-gray-500">
                       No orders found
                     </td>
                   </tr>
@@ -135,6 +136,7 @@ const Orders = () => {
                   filteredOrders.map((order) => (
                     <tr key={order._id} className="border-b last:border-0">
                       <td className="p-3 font-medium">#{order.orderNumber}</td>
+                      <td className="p-3 text-sm text-gray-600">{formatDate(order.createdAt)}</td>
                       <td className="p-3">
                         <p className="font-medium">{order.user?.name || 'N/A'}</p>
                         <p className="text-xs text-gray-500">{order.user?.email || 'N/A'}</p>
