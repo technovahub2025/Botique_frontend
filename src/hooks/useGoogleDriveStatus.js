@@ -36,22 +36,21 @@ const useGoogleDriveStatus = () => {
         setStatus((prev) => ({
           ...prev,
           loading: false,
-          error: res.data.message || 'Failed to check Google Drive status',
+          error:
+            res.data.message ||
+            'Failed to check Google Drive status',
         }));
       }
     } catch (err) {
       setStatus((prev) => ({
         ...prev,
         loading: false,
-        error: err.response?.data?.message || 'Unable to check Google Drive connection',
+        error:
+          err.response?.data?.message ||
+          'Unable to check Google Drive connection',
       }));
     }
   }, []);
-
-  const handleConnect = () => {
-    const baseUrl = adminApi.defaults.baseURL || '';
-    window.location.href = `${baseUrl}/google-drive/auth`;
-  };
 
   useEffect(() => {
     fetchStatus();
@@ -60,7 +59,6 @@ const useGoogleDriveStatus = () => {
   return {
     status,
     fetchStatus,
-    handleConnect,
     isConnected: status.connected,
     isLoading: status.loading,
   };
