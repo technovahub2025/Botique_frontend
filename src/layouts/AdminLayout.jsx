@@ -130,10 +130,6 @@ const AdminLayout = () => {
               <div className="flex items-center gap-2 mb-2">
                 <HardDrive className="w-4 h-4 text-gray-600" />
 
-                <span className="text-xs font-medium text-gray-500 uppercase">
-                  Google Drive
-                </span>
-              </div>
 
               {/* Connection Status */}
               <div className="flex items-center justify-between mb-3">
