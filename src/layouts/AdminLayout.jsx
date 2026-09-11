@@ -124,17 +124,15 @@ const AdminLayout = () => {
           {/* Bottom Sidebar Area */}
           <div className="border-t pt-4">
 
-            {/* Google Drive Status */}
+            {/* Connection Status */}
             <div className="px-4 py-2">
 
-              <div className="flex items-center gap-2 mb-2">
-                <HardDrive className="w-4 h-4 text-gray-600" />
-
-
-              {/* Connection Status */}
+              {/* Drive Icon + Connection Status */}
               <div className="flex items-center justify-between mb-3">
 
                 <div className="flex items-center gap-2">
+                  <HardDrive className="w-4 h-4 text-gray-600" />
+
                   <span
                     className={`w-2 h-2 rounded-full ${
                       status.connected
@@ -157,7 +155,7 @@ const AdminLayout = () => {
                   type="button"
                   onClick={fetchStatus}
                   disabled={status.loading}
-                  title="Refresh Google Drive status"
+                  title="Refresh connection status"
                   className="p-1 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <RefreshCw
@@ -260,12 +258,8 @@ const AdminLayout = () => {
 
             </div>
 
-            {/* Google Drive Status */}
+            {/* Connection Status */}
             <div className="flex items-center gap-2 text-sm">
-
-              <span className="text-gray-600">
-                Google Drive:
-              </span>
 
               {status.loading ? (
                 <span className="text-gray-500">
@@ -288,7 +282,7 @@ const AdminLayout = () => {
                 type="button"
                 onClick={fetchStatus}
                 disabled={status.loading}
-                title="Refresh Google Drive status"
+                title="Refresh connection status"
                 className="ml-1 p-1 rounded hover:bg-gray-100 disabled:opacity-50"
               >
                 <RefreshCw
