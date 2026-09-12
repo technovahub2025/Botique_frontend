@@ -1,57 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
 
-/*
- * Detect video from URL when possible.
- */
-const isVideoUrl = (url = '') => {
-  if (!url || typeof url !== 'string') {
-    return false;
-  }
-
-  const cleanUrl = url
-    .split('?')[0]
-    .split('#')[0]
-    .toLowerCase();
-
-  return (
-    cleanUrl.endsWith('.mp4') ||
-    cleanUrl.endsWith('.webm') ||
-    cleanUrl.endsWith('.mov') ||
-    cleanUrl.endsWith('.m4v') ||
-    cleanUrl.endsWith('.ogv') ||
-    cleanUrl.endsWith('.ogg') ||
-    cleanUrl.endsWith('.mpeg') ||
-    cleanUrl.endsWith('.mpg')
-  );
-};
-
-/*
- * Detect video using metadata returned by the backend.
- */
-const hasVideoMimeType = (card) => {
-  const mimeType =
-    card?.videoMetadata?.mimeType ||
-    card?.mediaMetadata?.mimeType ||
-    card?.mimeType ||
-    '';
-
-  return (
-    typeof mimeType === 'string' &&
-    mimeType.toLowerCase().startsWith('video/')
-  );
-};
-
-/*
- * Determine whether the admin-selected media is a video.
- */
-const isVideoMedia = (card, mediaUrl) => {
-  return (
-    hasVideoMimeType(card) ||
-    isVideoUrl(mediaUrl)
-  );
-};
-
 const PriceSections = () => {
   const { getSection } = useHomepageSettings();
 
@@ -61,10 +10,9 @@ const PriceSections = () => {
   const subtitle = section.subtitle || 'Curated By Price';
 
   /*
-   * IMPORTANT:
-   * Cards come ONLY from the admin settings.
+   * Price cards are controlled entirely by the Admin Panel.
    *
-   * There are NO hard-coded price cards here.
+   * No default / hard-coded price cards are created here.
    */
   const cards = Array.isArray(section.cards)
     ? section.cards.filter(
@@ -73,15 +21,15 @@ const PriceSections = () => {
     : [];
 
   /*
-   * Respect the order set by the admin.
+   * Respect the order configured by the admin.
    */
   const sortedCards = [...cards].sort(
     (a, b) => (a.order || 0) - (b.order || 0)
   );
 
   /*
-   * If admin has not created any cards,
-   * don't show fake/default cards.
+   * If the admin has not added any cards,
+   * don't display an empty section.
    */
   if (sortedCards.length === 0) {
     return null;
@@ -105,7 +53,7 @@ const PriceSections = () => {
         </div>
 
         {/* ==============================
-            ADMIN CONTROLLED CARDS
+            PRICE CARDS
         ============================== */}
         <div
           className="
@@ -117,32 +65,13 @@ const PriceSections = () => {
           "
         >
           {sortedCards.map((card, index) => {
-
-            /*
-             * Admin can provide either:
-             * - imageUrl
-             * - video
-             * - videoUrl
-             * - videoURL
-             */
-            const mediaUrl =
-              card?.videoUrl ||
-              card?.videoURL ||
-              card?.video ||
-              card?.imageUrl ||
-              '';
-
-            const hasMedia = Boolean(mediaUrl);
-
-            const isVideo = isVideoMedia(
-              card,
-              mediaUrl
-            );
+            const imageUrl = card?.imageUrl || '';
 
             const destination =
               card?.link ||
               (
-                card?.maxPrice
+                card?.maxPrice !== undefined &&
+                card?.maxPrice !== null
                   ? `/shop?maxPrice=${card.maxPrice}`
                   : '/shop'
               );
@@ -150,10 +79,9 @@ const PriceSections = () => {
             return (
               <Link
                 key={
-                  card.id ||
-                  card._id ||
-                  card.link ||
-                  `${card.title}-${index}`
+                  card?.id ||
+                  card?._id ||
+                  `${card?.title || 'price-card'}-${index}`
                 }
                 to={destination}
                 className="
@@ -168,9 +96,9 @@ const PriceSections = () => {
               >
 
                 {/* ==============================
-                    MEDIA
+                    IMAGE
                 ============================== */}
-                {hasMedia ? (
+                {imageUrl ? (
                   <div
                     className="
                       w-full
@@ -181,42 +109,21 @@ const PriceSections = () => {
                       justify-center
                     "
                   >
-                    {isVideo ? (
-                      <video
-                        src={mediaUrl}
-                        className="
-                          w-full
-                          h-auto
-                          object-contain
-                          object-center
-                          block
-                        "
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                      />
-                    ) : (
-                      <img
-                        src={mediaUrl}
-                        alt={
-                          card?.title ||
-                          'Collection'
-                        }
-                        className="
-                          w-full
-                          h-auto
-                          object-contain
-                          object-center
-                          block
-                        "
-                      />
-                    )}
+                    <img
+                      src={imageUrl}
+                      alt={card?.title || 'Collection'}
+                      className="
+                        w-full
+                        h-auto
+                        object-contain
+                        object-center
+                        block
+                      "
+                    />
                   </div>
                 ) : (
                   /* ==============================
-                     NO MEDIA
+                     NO IMAGE
                   ============================== */
                   <div
                     className="
@@ -238,27 +145,29 @@ const PriceSections = () => {
                         tracking-wider
                       "
                     >
-                      {card?.title}
+                      {card?.title || 'Price Range'}
                     </span>
                   </div>
                 )}
 
                 {/* ==============================
-                    CARD INFORMATION
+                    CARD CONTENT
                 ============================== */}
                 <div className="p-6">
 
-                  <p
-                    className="
-                      font-heading
-                      text-lg
-                      text-charcoal
-                      group-hover:text-burgundy
-                      transition-colors
-                    "
-                  >
-                    {card?.title}
-                  </p>
+                  {card?.title && (
+                    <p
+                      className="
+                        font-heading
+                        text-lg
+                        text-charcoal
+                        group-hover:text-burgundy
+                        transition-colors
+                      "
+                    >
+                      {card.title}
+                    </p>
+                  )}
 
                   {card?.description && (
                     <p className="text-sm text-gray-500 mt-1">
