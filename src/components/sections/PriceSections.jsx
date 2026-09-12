@@ -87,35 +87,22 @@ const PriceSections = () => {
                   duration-300
                 "
               >
-
-                {/* IMAGE */}
+                {/* IMAGE / EMPTY CARD AREA */}
                 {imageUrl ? (
-                  <div
-                    className="
-                      w-full
-                      h-[355px]
-                      overflow-hidden
-                      bg-cream
-                      flex
-                      items-center
-                      justify-center
-                    "
-                  >
+                  <div className="w-full overflow-hidden bg-cream flex items-center justify-center">
                     <img
                       src={imageUrl}
                       alt={card.title || 'Collection'}
                       className="
                         w-full
-                        h-full
+                        h-auto
                         object-contain
                         object-center
-                        transition-transform
-                        duration-700
+                        block
                       "
                     />
                   </div>
                 ) : (
-                  /* TEXT-ONLY CARD */
                   <div
                     className="
                       w-full
@@ -159,7 +146,6 @@ const PriceSections = () => {
                     {card.description}
                   </p>
                 </div>
-
               </Link>
             );
           })}
