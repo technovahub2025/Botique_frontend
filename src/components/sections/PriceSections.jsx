@@ -1,60 +1,99 @@
 import { Link } from 'react-router-dom';
 import { useHomepageSettings } from '../../context/HomepageSettingsContext';
 
-const DEFAULT_PRICE_CARDS = [
-  {
-    title: 'UNDER ₹15K',
-    description: 'Accessible luxury starting points.',
-    minPrice: 0,
-    maxPrice: 15000,
-    link: '/shop?maxPrice=15000',
-    imageUrl: '',
-  },
-  {
-    title: 'UNDER ₹25K',
-    description: 'Statement pieces and heirloom silhouettes.',
-    minPrice: 15001,
-    maxPrice: 25000,
-    link: '/shop?maxPrice=25000',
-    imageUrl: '',
-  },
-  {
-    title: 'UNDER ₹40K',
-    description: 'Bespoke and collector-grade designs.',
-    minPrice: 25001,
-    maxPrice: 40000,
-    link: '/shop?maxPrice=40000',
-    imageUrl: '',
-  },
-];
+/*
+ * Detect video from URL when possible.
+ */
+const isVideoUrl = (url = '') => {
+  if (!url || typeof url !== 'string') {
+    return false;
+  }
+
+  const cleanUrl = url
+    .split('?')[0]
+    .split('#')[0]
+    .toLowerCase();
+
+  return (
+    cleanUrl.endsWith('.mp4') ||
+    cleanUrl.endsWith('.webm') ||
+    cleanUrl.endsWith('.mov') ||
+    cleanUrl.endsWith('.m4v') ||
+    cleanUrl.endsWith('.ogv') ||
+    cleanUrl.endsWith('.ogg') ||
+    cleanUrl.endsWith('.mpeg') ||
+    cleanUrl.endsWith('.mpg')
+  );
+};
+
+/*
+ * Detect video using metadata returned by the backend.
+ */
+const hasVideoMimeType = (card) => {
+  const mimeType =
+    card?.videoMetadata?.mimeType ||
+    card?.mediaMetadata?.mimeType ||
+    card?.mimeType ||
+    '';
+
+  return (
+    typeof mimeType === 'string' &&
+    mimeType.toLowerCase().startsWith('video/')
+  );
+};
+
+/*
+ * Determine whether the admin-selected media is a video.
+ */
+const isVideoMedia = (card, mediaUrl) => {
+  return (
+    hasVideoMimeType(card) ||
+    isVideoUrl(mediaUrl)
+  );
+};
 
 const PriceSections = () => {
   const { getSection } = useHomepageSettings();
 
-  const section = getSection('price_sections');
+  const section = getSection('price_sections') || {};
 
   const title = section.title || 'Find Your Investment';
   const subtitle = section.subtitle || 'Curated By Price';
 
-  const rawCards = section.cards;
+  /*
+   * IMPORTANT:
+   * Cards come ONLY from the admin settings.
+   *
+   * There are NO hard-coded price cards here.
+   */
+  const cards = Array.isArray(section.cards)
+    ? section.cards.filter(
+        (card) => card && card.enabled !== false
+      )
+    : [];
 
-  const cards =
-    Array.isArray(rawCards) && rawCards.length > 0
-      ? rawCards.filter((c) => c && c.enabled !== false)
-      : DEFAULT_PRICE_CARDS.map((c, i) => ({
-          ...c,
-          order: i + 1,
-        }));
-
+  /*
+   * Respect the order set by the admin.
+   */
   const sortedCards = [...cards].sort(
     (a, b) => (a.order || 0) - (b.order || 0)
   );
+
+  /*
+   * If admin has not created any cards,
+   * don't show fake/default cards.
+   */
+  if (sortedCards.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-16 lg:py-24">
       <div className="container mx-auto px-4 lg:px-8">
 
-        {/* Section Heading */}
+        {/* ==============================
+            SECTION HEADING
+        ============================== */}
         <div className="text-center mb-12">
           <p className="text-xs font-medium text-burgundy uppercase tracking-widest mb-2">
             {subtitle}
@@ -65,18 +104,58 @@ const PriceSections = () => {
           </h2>
         </div>
 
-        {/* Price Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sortedCards.map((card, i) => {
-            const imageUrl = card?.imageUrl || '';
+        {/* ==============================
+            ADMIN CONTROLLED CARDS
+        ============================== */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            md:grid-cols-2
+            lg:grid-cols-3
+            gap-6
+          "
+        >
+          {sortedCards.map((card, index) => {
+
+            /*
+             * Admin can provide either:
+             * - imageUrl
+             * - video
+             * - videoUrl
+             * - videoURL
+             */
+            const mediaUrl =
+              card?.videoUrl ||
+              card?.videoURL ||
+              card?.video ||
+              card?.imageUrl ||
+              '';
+
+            const hasMedia = Boolean(mediaUrl);
+
+            const isVideo = isVideoMedia(
+              card,
+              mediaUrl
+            );
+
+            const destination =
+              card?.link ||
+              (
+                card?.maxPrice
+                  ? `/shop?maxPrice=${card.maxPrice}`
+                  : '/shop'
+              );
 
             return (
               <Link
-                key={card.link || card.title || `card-${i}`}
-                to={
+                key={
+                  card.id ||
+                  card._id ||
                   card.link ||
-                  `/shop?maxPrice=${card.maxPrice || 0}`
+                  `${card.title}-${index}`
                 }
+                to={destination}
                 className="
                   group
                   block
@@ -87,22 +166,58 @@ const PriceSections = () => {
                   duration-300
                 "
               >
-                {/* IMAGE / EMPTY CARD AREA */}
-                {imageUrl ? (
-                  <div className="w-full overflow-hidden bg-cream flex items-center justify-center">
-                    <img
-                      src={imageUrl}
-                      alt={card.title || 'Collection'}
-                      className="
-                        w-full
-                        h-auto
-                        object-contain
-                        object-center
-                        block
-                      "
-                    />
+
+                {/* ==============================
+                    MEDIA
+                ============================== */}
+                {hasMedia ? (
+                  <div
+                    className="
+                      w-full
+                      overflow-hidden
+                      bg-cream
+                      flex
+                      items-center
+                      justify-center
+                    "
+                  >
+                    {isVideo ? (
+                      <video
+                        src={mediaUrl}
+                        className="
+                          w-full
+                          h-auto
+                          object-contain
+                          object-center
+                          block
+                        "
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img
+                        src={mediaUrl}
+                        alt={
+                          card?.title ||
+                          'Collection'
+                        }
+                        className="
+                          w-full
+                          h-auto
+                          object-contain
+                          object-center
+                          block
+                        "
+                      />
+                    )}
                   </div>
                 ) : (
+                  /* ==============================
+                     NO MEDIA
+                  ============================== */
                   <div
                     className="
                       w-full
@@ -123,13 +238,16 @@ const PriceSections = () => {
                         tracking-wider
                       "
                     >
-                      {card.title}
+                      {card?.title}
                     </span>
                   </div>
                 )}
 
-                {/* CARD CONTENT */}
+                {/* ==============================
+                    CARD INFORMATION
+                ============================== */}
                 <div className="p-6">
+
                   <p
                     className="
                       font-heading
@@ -139,13 +257,17 @@ const PriceSections = () => {
                       transition-colors
                     "
                   >
-                    {card.title}
+                    {card?.title}
                   </p>
 
-                  <p className="text-sm text-gray-500 mt-1">
-                    {card.description}
-                  </p>
+                  {card?.description && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      {card.description}
+                    </p>
+                  )}
+
                 </div>
+
               </Link>
             );
           })}
