@@ -54,11 +54,6 @@ const Craftsmanship = () => {
                   }}
                 />
               </div>
-              <div className="absolute -bottom-8 -left-8 bg-cream p-6 max-w-xs">
-                <p className="font-heading text-burgundy text-sm uppercase tracking-widest">
-                  Handwoven in India
-                </p>
-              </div>
             </div>
           </div>
         </div>
