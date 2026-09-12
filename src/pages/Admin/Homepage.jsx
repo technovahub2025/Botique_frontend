@@ -1,9 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Save, Image, FileText, LayoutGrid, Tag, Mail, Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, Upload } from 'lucide-react';
+import {
+  Save,
+  Image,
+  FileText,
+  LayoutGrid,
+  Tag,
+  Mail,
+  Plus,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  ChevronRight,
+  Upload,
+} from 'lucide-react';
+
 import adminApi, { deleteMedia } from '../../services/adminApi';
 import { toArray } from '../../utils';
 import ImageUrlPreview from '../../components/ui/ImageUrlPreview';
 import ImageUploadField from '../../components/ui/ImageUploadField';
+
+const IMAGE_ACCEPT =
+  'image/jpeg,image/jpg,image/jfif,image/png,image/webp,image/gif,image/bmp,image/tiff';
 
 const SECTIONS = [
   {
@@ -11,93 +28,263 @@ const SECTIONS = [
     name: 'Hero Banner',
     icon: Image,
     fields: [
-      { key: 'heading', label: 'Global Hero Heading (fallback)', type: 'text', placeholder: 'Welcome to Loom & Luster' },
-      { key: 'description', label: 'Global Hero Description (fallback)', type: 'textarea', placeholder: 'Discover premium handcrafted clothing' },
-      { key: 'ctaText', label: 'Global CTA Button Text (fallback)', type: 'text', placeholder: 'Shop Now' },
-      { key: 'ctaLink', label: 'Global CTA Button Link (fallback)', type: 'text', placeholder: '/shop' },
+      {
+        key: 'heading',
+        label: 'Global Hero Heading (fallback)',
+        type: 'text',
+        placeholder: 'Welcome to Loom & Luster',
+      },
+      {
+        key: 'description',
+        label: 'Global Hero Description (fallback)',
+        type: 'textarea',
+        placeholder: 'Discover premium handcrafted clothing',
+      },
+      {
+        key: 'ctaText',
+        label: 'Global CTA Button Text (fallback)',
+        type: 'text',
+        placeholder: 'Shop Now',
+      },
+      {
+        key: 'ctaLink',
+        label: 'Global CTA Button Link (fallback)',
+        type: 'text',
+        placeholder: '/shop',
+      },
     ],
     customRender: 'hero-slides',
   },
+
   {
     id: 'featured_collection',
     name: 'Featured Collection',
     icon: LayoutGrid,
     fields: [
-      { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Featured Collection' },
-      { key: 'collectionId', label: 'Collection ID', type: 'text', placeholder: 'Select collection' },
-      { key: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Curated selection' },
-      { key: 'image', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
+      {
+        key: 'title',
+        label: 'Section Title',
+        type: 'text',
+        placeholder: 'Featured Collection',
+      },
+      {
+        key: 'collectionId',
+        label: 'Collection ID',
+        type: 'text',
+        placeholder: 'Select collection',
+      },
+      {
+        key: 'subtitle',
+        label: 'Subtitle',
+        type: 'text',
+        placeholder: 'Curated selection',
+      },
+      {
+        key: 'image',
+        label: 'Image URL',
+        type: 'text',
+        placeholder: 'https://...',
+        ui: 'image-url',
+      },
     ],
   },
+
   {
     id: 'new_arrivals',
     name: 'New Arrivals',
     icon: Tag,
     fields: [
-      { key: 'title', label: 'Section Title', type: 'text', placeholder: 'New Arrivals' },
-      { key: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Just in' },
-      { key: 'limit', label: 'Number of Products', type: 'number', placeholder: '8' },
+      {
+        key: 'title',
+        label: 'Section Title',
+        type: 'text',
+        placeholder: 'New Arrivals',
+      },
+      {
+        key: 'subtitle',
+        label: 'Subtitle',
+        type: 'text',
+        placeholder: 'Just in',
+      },
+      {
+        key: 'limit',
+        label: 'Number of Products',
+        type: 'number',
+        placeholder: '8',
+      },
     ],
   },
+
   {
     id: 'editorial',
     name: 'Editorial Section',
     icon: FileText,
     fields: [
-      { key: 'title', label: 'Title', type: 'text', placeholder: 'The Art of Handweaving' },
-      { key: 'content', label: 'Content', type: 'textarea', placeholder: 'Editorial content...' },
-      { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
-      { key: 'linkUrl', label: 'Link URL', type: 'text', placeholder: '/story' },
+      {
+        key: 'title',
+        label: 'Title',
+        type: 'text',
+        placeholder: 'The Art of Handweaving',
+      },
+      {
+        key: 'content',
+        label: 'Content',
+        type: 'textarea',
+        placeholder: 'Editorial content...',
+      },
+      {
+        key: 'imageUrl',
+        label: 'Image URL',
+        type: 'text',
+        placeholder: 'https://...',
+        ui: 'image-url',
+      },
+      {
+        key: 'linkUrl',
+        label: 'Link URL',
+        type: 'text',
+        placeholder: '/story',
+      },
     ],
   },
+
   {
     id: 'trending',
     name: 'Trending Products',
     icon: LayoutGrid,
     fields: [
-      { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Trending Now' },
-      { key: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Most popular pieces' },
-      { key: 'limit', label: 'Number of Products', type: 'number', placeholder: '8' },
+      {
+        key: 'title',
+        label: 'Section Title',
+        type: 'text',
+        placeholder: 'Trending Now',
+      },
+      {
+        key: 'subtitle',
+        label: 'Subtitle',
+        type: 'text',
+        placeholder: 'Most popular pieces',
+      },
+      {
+        key: 'limit',
+        label: 'Number of Products',
+        type: 'number',
+        placeholder: '8',
+      },
     ],
   },
+
   {
     id: 'craftsmanship',
     name: 'Craftsmanship',
     icon: Image,
     fields: [
-      { key: 'title', label: 'Title', type: 'text', placeholder: 'Our Craftsmanship' },
-      { key: 'description', label: 'Description', type: 'text', placeholder: 'Handcrafted with care' },
-      { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
+      {
+        key: 'title',
+        label: 'Title',
+        type: 'text',
+        placeholder: 'Our Craftsmanship',
+      },
+      {
+        key: 'description',
+        label: 'Description',
+        type: 'text',
+        placeholder: 'Handcrafted with care',
+      },
+      {
+        key: 'imageUrl',
+        label: 'Image URL',
+        type: 'text',
+        placeholder: 'https://...',
+        ui: 'image-url',
+      },
     ],
   },
+
   {
     id: 'price_sections',
     name: 'Price Curation',
     icon: Tag,
     fields: [
-      { key: 'subtitle', label: 'Section Eyebrow', type: 'text', placeholder: 'CURATED BY PRICE' },
-      { key: 'title', label: 'Section Title', type: 'text', placeholder: 'Find Your Investment' },
+      {
+        key: 'subtitle',
+        label: 'Section Eyebrow',
+        type: 'text',
+        placeholder: 'CURATED BY PRICE',
+      },
+      {
+        key: 'title',
+        label: 'Section Title',
+        type: 'text',
+        placeholder: 'Find Your Investment',
+      },
     ],
     customRender: 'price-cards',
+
     priceCardFields: [
-      { key: 'title', label: 'Title', type: 'text', placeholder: 'UNDER ₹15K' },
-      { key: 'description', label: 'Description', type: 'text', placeholder: 'Accessible luxury starting points.' },
-      { key: 'minPrice', label: 'Min Price', type: 'number', placeholder: '0' },
-      { key: 'maxPrice', label: 'Max Price', type: 'number', placeholder: '15000' },
-      { key: 'link', label: 'Link URL', type: 'text', placeholder: '/shop?maxPrice=15000' },
+      {
+        key: 'title',
+        label: 'Title',
+        type: 'text',
+        placeholder: 'UNDER ₹15K',
+      },
+      {
+        key: 'description',
+        label: 'Description',
+        type: 'text',
+        placeholder: 'Accessible luxury starting points.',
+      },
+      {
+        key: 'minPrice',
+        label: 'Min Price',
+        type: 'number',
+        placeholder: '0',
+      },
+      {
+        key: 'maxPrice',
+        label: 'Max Price',
+        type: 'number',
+        placeholder: '15000',
+      },
+      {
+        key: 'link',
+        label: 'Link URL',
+        type: 'text',
+        placeholder: '/shop?maxPrice=15000',
+      },
     ],
   },
+
   {
     id: 'newsletter',
     name: 'Newsletter',
     icon: Mail,
     fields: [
-      { key: 'title', label: 'Title', type: 'text', placeholder: 'Join Our Newsletter' },
-      { key: 'description', label: 'Description', type: 'text', placeholder: 'Subscribe for updates' },
-      { key: 'buttonText', label: 'Button Text', type: 'text', placeholder: 'Subscribe' },
+      {
+        key: 'title',
+        label: 'Title',
+        type: 'text',
+        placeholder: 'Join Our Newsletter',
+      },
+      {
+        key: 'description',
+        label: 'Description',
+        type: 'text',
+        placeholder: 'Subscribe for updates',
+      },
+      {
+        key: 'buttonText',
+        label: 'Button Text',
+        type: 'text',
+        placeholder: 'Subscribe',
+      },
     ],
   },
 ];
+
+/* =========================================================
+   HERO SLIDES EDITOR
+========================================================= */
 
 const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   const [expandedSlides, setExpandedSlides] = useState({});
@@ -108,49 +295,83 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
     onChange('heroImages', (prev) => {
       const current = Array.isArray(prev) ? prev : [];
       const newSlides = [...current];
-      if (!newSlides[slideIndex] || typeof newSlides[slideIndex] !== 'object') {
+
+      if (
+        !newSlides[slideIndex] ||
+        typeof newSlides[slideIndex] !== 'object'
+      ) {
         newSlides[slideIndex] = {};
       }
-      newSlides[slideIndex] = { ...newSlides[slideIndex], [field]: value };
+
+      newSlides[slideIndex] = {
+        ...newSlides[slideIndex],
+        [field]: value,
+      };
+
       return newSlides;
     });
   };
 
   const toggleExpand = (idx) => {
-    setExpandedSlides((prev) => ({ ...prev, [idx]: !prev[idx] }));
+    setExpandedSlides((prev) => ({
+      ...prev,
+      [idx]: !prev[idx],
+    }));
   };
 
   const addSlide = () => {
     onChange('heroImages', (prev) => {
       const current = Array.isArray(prev) ? prev : [];
+
       return [
         ...current,
-         {
-           id: crypto.randomUUID(),
-           imageUrl: '',
-           imageMetadata: {},
-           smallLabel: '',
-          heading: data.heading || globalDefaults.heading || '',
-          description: data.description || globalDefaults.description || '',
-          buttonText: data.ctaText || globalDefaults.ctaText || '',
-          buttonLink: data.ctaLink || globalDefaults.ctaLink || '/shop',
+        {
+          id: crypto.randomUUID(),
+          imageUrl: '',
+          imageMetadata: {},
+          smallLabel: '',
+          heading:
+            data.heading ||
+            globalDefaults.heading ||
+            '',
+          description:
+            data.description ||
+            globalDefaults.description ||
+            '',
+          buttonText:
+            data.ctaText ||
+            globalDefaults.ctaText ||
+            '',
+          buttonLink:
+            data.ctaLink ||
+            globalDefaults.ctaLink ||
+            '/shop',
           isActive: true,
           enabled: true,
           order: current.length + 1,
         },
       ];
     });
-    setExpandedSlides((prev) => ({ ...prev, [slides.length]: true }));
+
+    setExpandedSlides((prev) => ({
+      ...prev,
+      [slides.length]: true,
+    }));
   };
 
   const removeSlide = (idx) => {
     onChange('heroImages', (prev) => {
       const current = Array.isArray(prev) ? prev : [];
+
       return current
         .map((s, i) => (i === idx ? null : s))
         .filter(Boolean)
-        .map((s, i) => ({ ...s, order: i + 1 }));
+        .map((s, i) => ({
+          ...s,
+          order: i + 1,
+        }));
     });
+
     setExpandedSlides((prev) => {
       const next = { ...prev };
       delete next[idx];
@@ -161,13 +382,20 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   const moveSlide = (from, to) => {
     onChange('heroImages', (prev) => {
       const current = Array.isArray(prev) ? prev : [];
-      if (to < 0 || to >= current.length) return prev;
+
+      if (to < 0 || to >= current.length) {
+        return prev;
+      }
+
       const newSlides = [...current];
       const [removed] = newSlides.splice(from, 1);
+
       newSlides.splice(to, 0, removed);
+
       newSlides.forEach((s, i) => {
         s.order = i + 1;
       });
+
       return newSlides;
     });
   };
@@ -177,61 +405,118 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Hero Slides
       </label>
+
       <div className="space-y-4">
         {slides.map((slide, idx) => {
-          const isObj = slide && typeof slide === 'object';
-           const imageUrl = isObj ? (slide.imageUrl || slide.image || '') : slide;
-           const imageMetadata = isObj ? (slide.imageMetadata || {}) : {};
-           const smallLabel = isObj ? (slide.smallLabel || '') : '';
-          const heading = isObj ? (slide.heading || '') : '';
-          const description = isObj ? (slide.description || '') : '';
-          const buttonText = isObj ? (slide.buttonText || '') : '';
-          const buttonLink = isObj ? (slide.buttonLink || '') : '';
-          const isActive = isObj ? (slide.isActive !== undefined ? slide.isActive : slide.enabled !== false) : true;
+          const isObj =
+            slide &&
+            typeof slide === 'object';
+
+          const imageUrl = isObj
+            ? slide.imageUrl || slide.image || ''
+            : slide;
+
+          const imageMetadata = isObj
+            ? slide.imageMetadata || {}
+            : {};
+
+          const smallLabel = isObj
+            ? slide.smallLabel || ''
+            : '';
+
+          const heading = isObj
+            ? slide.heading || ''
+            : '';
+
+          const description = isObj
+            ? slide.description || ''
+            : '';
+
+          const buttonText = isObj
+            ? slide.buttonText || ''
+            : '';
+
+          const buttonLink = isObj
+            ? slide.buttonLink || ''
+            : '';
+
+          const isActive = isObj
+            ? slide.isActive !== undefined
+              ? slide.isActive
+              : slide.enabled !== false
+            : true;
+
           const enabled = isActive;
-          const order = isObj ? (slide.order || idx + 1) : idx + 1;
-          const isOpen = expandedSlides[idx] || false;
+
+          const order = isObj
+            ? slide.order || idx + 1
+            : idx + 1;
+
+          const isOpen =
+            expandedSlides[idx] || false;
 
           return (
             <div
               key={slide.id || idx}
               className={`border border-gray-200 rounded-lg p-4 transition-all duration-200 ${
-                enabled ? 'border-gold/30' : 'opacity-60'
+                enabled
+                  ? 'border-gold/30'
+                  : 'opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-gray-700">Slide {idx + 1}</span>
+                  <span className="font-medium text-sm text-gray-700">
+                    Slide {idx + 1}
+                  </span>
+
                   <button
                     type="button"
-                    onClick={() => toggleExpand(idx)}
+                    onClick={() =>
+                      toggleExpand(idx)
+                    }
                     className="text-xs text-gray-500 hover:text-gray-700"
                   >
-                    {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    {isOpen ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
+
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => moveSlide(idx, idx - 1)}
+                    onClick={() =>
+                      moveSlide(idx, idx - 1)
+                    }
                     disabled={idx === 0}
                     className="text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30"
                     aria-label="Move up"
                   >
                     <ChevronUp className="w-3 h-3" />
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => moveSlide(idx, idx + 1)}
-                    disabled={idx === slides.length - 1}
+                    onClick={() =>
+                      moveSlide(idx, idx + 1)
+                    }
+                    disabled={
+                      idx === slides.length - 1
+                    }
                     className="text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30"
                     aria-label="Move down"
                   >
                     <ChevronDown className="w-3 h-3" />
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => removeSlide(idx)}
+                    onClick={() =>
+                      removeSlide(idx)
+                    }
                     className="text-xs text-red-500 hover:text-red-700"
                     aria-label="Remove slide"
                   >
@@ -240,47 +525,81 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                 </div>
               </div>
 
-                {isOpen && (
-                 <div className="space-y-3">
-                   <div>
-                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                       Image
-                     </label>
-                      <ImageUploadField
-                        value={imageUrl}
-                        onChange={(url) => updateSlide(idx, 'imageUrl', url)}
-                        onMetadataChange={(meta) => updateSlide(idx, 'imageMetadata', meta || {})}
-                        onRemove={async () => {
-                          const driveFileId = imageMetadata?.driveFileId;
-                          if (driveFileId) {
-                            await deleteMedia(driveFileId);
-                          }
-                        }}
-                      />
-                     <input
-                       type="text"
-                       value={imageUrl}
-                       onChange={(e) => updateSlide(idx, 'imageUrl', e.target.value)}
-                       placeholder="Or enter image URL manually"
-                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
-                     />
+              {isOpen && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Image
+                    </label>
+
+                    <ImageUploadField
+                      value={imageUrl}
+                      onChange={(url) =>
+                        updateSlide(
+                          idx,
+                          'imageUrl',
+                          url
+                        )
+                      }
+                      onMetadataChange={(meta) =>
+                        updateSlide(
+                          idx,
+                          'imageMetadata',
+                          meta || {}
+                        )
+                      }
+                      onRemove={async () => {
+                        const driveFileId =
+                          imageMetadata?.driveFileId;
+
+                        if (driveFileId) {
+                          await deleteMedia(
+                            driveFileId
+                          );
+                        }
+                      }}
+                    />
+
+                    <input
+                      type="text"
+                      value={imageUrl}
+                      onChange={(e) =>
+                        updateSlide(
+                          idx,
+                          'imageUrl',
+                          e.target.value
+                        )
+                      }
+                      placeholder="Or enter image URL manually"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                    />
+
                     {imageUrl && (
                       <ImageUrlPreview
                         url={imageUrl}
-                        alt={`Slide ${idx + 1} preview`}
+                        alt={`Slide ${
+                          idx + 1
+                        } preview`}
                         className="max-w-[500px]"
                       />
                     )}
-                    </div>
+                  </div>
 
-                   <div>
-                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                       Small Label / Eyebrow
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Small Label / Eyebrow
                     </label>
+
                     <input
                       type="text"
                       value={smallLabel}
-                      onChange={(e) => updateSlide(idx, 'smallLabel', e.target.value)}
+                      onChange={(e) =>
+                        updateSlide(
+                          idx,
+                          'smallLabel',
+                          e.target.value
+                        )
+                      }
                       placeholder="HANDCRAFTED HERITAGE"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                     />
@@ -290,10 +609,17 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Heading
                     </label>
+
                     <input
                       type="text"
                       value={heading}
-                      onChange={(e) => updateSlide(idx, 'heading', e.target.value)}
+                      onChange={(e) =>
+                        updateSlide(
+                          idx,
+                          'heading',
+                          e.target.value
+                        )
+                      }
                       placeholder="Slide heading"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                     />
@@ -303,36 +629,58 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Description
                     </label>
+
                     <textarea
                       value={description}
-                      onChange={(e) => updateSlide(idx, 'description', e.target.value)}
+                      onChange={(e) =>
+                        updateSlide(
+                          idx,
+                          'description',
+                          e.target.value
+                        )
+                      }
                       placeholder="Slide description"
                       rows={2}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                     />
                   </div>
 
-                   <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         CTA Text
                       </label>
+
                       <input
                         type="text"
                         value={buttonText}
-                        onChange={(e) => updateSlide(idx, 'buttonText', e.target.value)}
+                        onChange={(e) =>
+                          updateSlide(
+                            idx,
+                            'buttonText',
+                            e.target.value
+                          )
+                        }
                         placeholder="Shop Now"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                       />
                     </div>
+
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         CTA Link
                       </label>
+
                       <input
                         type="text"
                         value={buttonLink}
-                        onChange={(e) => updateSlide(idx, 'buttonLink', e.target.value)}
+                        onChange={(e) =>
+                          updateSlide(
+                            idx,
+                            'buttonLink',
+                            e.target.value
+                          )
+                        }
                         placeholder="/shop"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                       />
@@ -344,33 +692,53 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         Display Order
                       </label>
+
                       <input
                         type="number"
                         value={order}
-                        onChange={(e) => updateSlide(idx, 'order', Number(e.target.value))}
+                        onChange={(e) =>
+                          updateSlide(
+                            idx,
+                            'order',
+                            Number(
+                              e.target.value
+                            )
+                          )
+                        }
                         min="1"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                       />
                     </div>
+
                     <div className="flex items-end">
                       <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={isActive}
                           onChange={(e) => {
-                            updateSlide(idx, 'isActive', e.target.checked);
-                            updateSlide(idx, 'enabled', e.target.checked);
+                            updateSlide(
+                              idx,
+                              'isActive',
+                              e.target.checked
+                            );
+
+                            updateSlide(
+                              idx,
+                              'enabled',
+                              e.target.checked
+                            );
                           }}
                           className="w-4 h-4 text-gold focus:ring-gold border-gray-300 rounded"
                         />
+
                         Active
                       </label>
                     </div>
-                   </div>
+                  </div>
                 </div>
               )}
-              </div>
-            );
+            </div>
+          );
         })}
 
         <button
@@ -386,39 +754,114 @@ const HeroSlidesEditor = ({ data, onChange, globalDefaults }) => {
   );
 };
 
+/* =========================================================
+   PRICE CARD FIELDS
+========================================================= */
+
 const DEFAULT_CARD_FIELDS = [
-  { key: 'title', label: 'Title', type: 'text', placeholder: 'UNDER ₹15K' },
-  { key: 'description', label: 'Description', type: 'text', placeholder: 'Accessible luxury starting points.' },
-  { key: 'minPrice', label: 'Min Price', type: 'number', placeholder: '0' },
-  { key: 'maxPrice', label: 'Max Price', type: 'number', placeholder: '15000' },
-  { key: 'link', label: 'Link URL', type: 'text', placeholder: '/shop?maxPrice=15000' },
-  { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: 'https://...', ui: 'image-url' },
+  {
+    key: 'title',
+    label: 'Title',
+    type: 'text',
+    placeholder: 'UNDER ₹15K',
+  },
+  {
+    key: 'description',
+    label: 'Description',
+    type: 'text',
+    placeholder:
+      'Accessible luxury starting points.',
+  },
+  {
+    key: 'minPrice',
+    label: 'Min Price',
+    type: 'number',
+    placeholder: '0',
+  },
+  {
+    key: 'maxPrice',
+    label: 'Max Price',
+    type: 'number',
+    placeholder: '15000',
+  },
+  {
+    key: 'link',
+    label: 'Link URL',
+    type: 'text',
+    placeholder:
+      '/shop?maxPrice=15000',
+  },
+  {
+    key: 'imageUrl',
+    label: 'Image URL',
+    type: 'text',
+    placeholder: 'https://...',
+    ui: 'image-url',
+  },
 ];
 
-const PriceCardsEditor = ({ data, onChange }) => {
-  const [expandedCards, setExpandedCards] = useState({});
-  const cards = Array.isArray(data.cards) ? data.cards : [];
+/* =========================================================
+   PRICE CARDS EDITOR
+========================================================= */
 
-  const updateCard = (cardIndex, field, value) => {
+const PriceCardsEditor = ({ data, onChange }) => {
+  const [expandedCards, setExpandedCards] =
+    useState({});
+
+  const cards = Array.isArray(data.cards)
+    ? data.cards
+    : [];
+
+  const updateCard = (
+    cardIndex,
+    field,
+    value
+  ) => {
     onChange('cards', (prev) => {
-      const current = Array.isArray(prev) ? prev : [];
+      const current = Array.isArray(prev)
+        ? prev
+        : [];
+
       const newCards = [...current];
-      if (!newCards[cardIndex] || typeof newCards[cardIndex] !== 'object') {
+
+      if (
+        !newCards[cardIndex] ||
+        typeof newCards[cardIndex] !== 'object'
+      ) {
         newCards[cardIndex] = {};
       }
-      newCards[cardIndex] = { ...newCards[cardIndex], [field]: value };
+
+      newCards[cardIndex] = {
+        ...newCards[cardIndex],
+        [field]: value,
+      };
+
       return newCards;
     });
   };
 
   const toggleExpand = (idx) => {
-    setExpandedCards((prev) => ({ ...prev, [idx]: !prev[idx] }));
+    setExpandedCards((prev) => ({
+      ...prev,
+      [idx]: !prev[idx],
+    }));
   };
 
   const addCard = () => {
     onChange('cards', (prev) => {
-      const current = Array.isArray(prev) ? prev : [];
-      const nextOrder = current.length > 0 ? Math.max(...current.map((c) => c.order || 0)) + 1 : 1;
+      const current = Array.isArray(prev)
+        ? prev
+        : [];
+
+      const nextOrder =
+        current.length > 0
+          ? Math.max(
+              ...current.map(
+                (c) => c.order || 0
+              )
+            ) + 1
+          : 1;
+
       return [
         ...current,
         {
@@ -434,17 +877,30 @@ const PriceCardsEditor = ({ data, onChange }) => {
         },
       ];
     });
-    setExpandedCards((prev) => ({ ...prev, [cards.length]: true }));
+
+    setExpandedCards((prev) => ({
+      ...prev,
+      [cards.length]: true,
+    }));
   };
 
   const removeCard = (idx) => {
     onChange('cards', (prev) => {
-      const current = Array.isArray(prev) ? prev : [];
+      const current = Array.isArray(prev)
+        ? prev
+        : [];
+
       return current
-        .map((c, i) => (i === idx ? null : c))
+        .map((c, i) =>
+          i === idx ? null : c
+        )
         .filter(Boolean)
-        .map((c, i) => ({ ...c, order: i + 1 }));
+        .map((c, i) => ({
+          ...c,
+          order: i + 1,
+        }));
     });
+
     setExpandedCards((prev) => {
       const next = { ...prev };
       delete next[idx];
@@ -454,14 +910,28 @@ const PriceCardsEditor = ({ data, onChange }) => {
 
   const moveCard = (from, to) => {
     onChange('cards', (prev) => {
-      const current = Array.isArray(prev) ? prev : [];
-      if (to < 0 || to >= current.length) return prev;
+      const current = Array.isArray(prev)
+        ? prev
+        : [];
+
+      if (
+        to < 0 ||
+        to >= current.length
+      ) {
+        return prev;
+      }
+
       const newCards = [...current];
-      const [removed] = newCards.splice(from, 1);
+
+      const [removed] =
+        newCards.splice(from, 1);
+
       newCards.splice(to, 0, removed);
+
       newCards.forEach((c, i) => {
         c.order = i + 1;
       });
+
       return newCards;
     });
   };
@@ -471,53 +941,91 @@ const PriceCardsEditor = ({ data, onChange }) => {
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Price Cards
       </label>
+
       <div className="space-y-4">
         {cards.map((card, idx) => {
-           const cardOrder = card?.order || idx + 1;
-           const cardEnabled = card?.enabled !== undefined ? card.enabled : true;
-           const isOpen = expandedCards[idx] || false;
-           const cardImageMetadata = card?.imageMetadata || {};
+          const cardOrder =
+            card?.order || idx + 1;
+
+          const cardEnabled =
+            card?.enabled !== undefined
+              ? card.enabled
+              : true;
+
+          const isOpen =
+            expandedCards[idx] || false;
+
+          const cardImageMetadata =
+            card?.imageMetadata || {};
 
           return (
             <div
               key={card.id || idx}
               className={`border border-gray-200 rounded-lg p-4 transition-all duration-200 ${
-                cardEnabled ? 'border-gold/30' : 'opacity-60'
+                cardEnabled
+                  ? 'border-gold/30'
+                  : 'opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-gray-700">Card {idx + 1}</span>
+                  <span className="font-medium text-sm text-gray-700">
+                    Card {idx + 1}
+                  </span>
+
                   <button
                     type="button"
-                    onClick={() => toggleExpand(idx)}
+                    onClick={() =>
+                      toggleExpand(idx)
+                    }
                     className="text-xs text-gray-500 hover:text-gray-700"
                   >
-                    {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    {isOpen ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
+
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => moveCard(idx, idx - 1)}
+                    onClick={() =>
+                      moveCard(
+                        idx,
+                        idx - 1
+                      )
+                    }
                     disabled={idx === 0}
                     className="text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30"
                     aria-label="Move up"
                   >
                     <ChevronUp className="w-3 h-3" />
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => moveCard(idx, idx + 1)}
-                    disabled={idx === cards.length - 1}
+                    onClick={() =>
+                      moveCard(
+                        idx,
+                        idx + 1
+                      )
+                    }
+                    disabled={
+                      idx === cards.length - 1
+                    }
                     className="text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30"
                     aria-label="Move down"
                   >
                     <ChevronDown className="w-3 h-3" />
                   </button>
+
                   <button
                     type="button"
-                    onClick={() => removeCard(idx)}
+                    onClick={() =>
+                      removeCard(idx)
+                    }
                     className="text-xs text-red-500 hover:text-red-700"
                     aria-label="Remove card"
                   >
@@ -528,71 +1036,145 @@ const PriceCardsEditor = ({ data, onChange }) => {
 
               {isOpen && (
                 <div className="space-y-3">
-                  {DEFAULT_CARD_FIELDS.map((field) => (
-                    <div key={field.key}>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        {field.label}
-                      </label>
-                      <input
-                        type={field.type === 'number' ? 'number' : 'text'}
-                        value={field.type === 'number' ? (card[field.key] ?? '') : (card[field.key] ?? '')}
-                        onChange={(e) =>
-                          updateCard(
-                            idx,
-                            field.key,
-                            field.type === 'number' ? Number(e.target.value) : e.target.value
-                          )
-                        }
-                        placeholder={field.placeholder}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
-                      />
-                    </div>
-                  ))}
+                  {DEFAULT_CARD_FIELDS.map(
+                    (field) => {
+                      return (
+                        <div
+                          key={field.key}
+                        >
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            {field.label}
+                          </label>
 
-                   {DEFAULT_CARD_FIELDS.some((f) => f.key === 'imageUrl') && card.imageUrl && (
-                     <div className="mt-2">
-                       <ImageUrlPreview url={card.imageUrl} alt="Card image" className="max-w-[320px]" />
-                     </div>
-                   )}
+                          <input
+                            type={
+                              field.type ===
+                              'number'
+                                ? 'number'
+                                : 'text'
+                            }
+                            value={
+                              field.type ===
+                              'number'
+                                ? card[
+                                    field.key
+                                  ] ?? ''
+                                : card[
+                                    field.key
+                                  ] ?? ''
+                            }
+                            onChange={(e) =>
+                              updateCard(
+                                idx,
+                                field.key,
+                                field.type ===
+                                  'number'
+                                  ? Number(
+                                      e.target
+                                        .value
+                                    )
+                                  : e.target
+                                      .value
+                              )
+                            }
+                            placeholder={
+                              field.placeholder
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                          />
+                        </div>
+                      );
+                    }
+                  )}
 
+                  {card.imageUrl && (
                     <div className="mt-2">
-                      <ImageUploadField
-                        value={card.imageUrl || ''}
-                        onChange={(url) => updateCard(idx, 'imageUrl', url)}
-                        onMetadataChange={(meta) => updateCard(idx, 'imageMetadata', meta || {})}
-                        onRemove={async () => {
-                          const driveFileId = cardImageMetadata?.driveFileId;
-                          if (driveFileId) {
-                            await deleteMedia(driveFileId);
-                          }
-                        }}
+                      <ImageUrlPreview
+                        url={card.imageUrl}
+                        alt="Card image"
+                        className="max-w-[320px]"
                       />
                     </div>
+                  )}
 
+                  {/* IMAGE UPLOAD ONLY
+                      Google Drive functionality is unchanged */}
+                  <div className="mt-2">
+                    <ImageUploadField
+                      value={
+                        card.imageUrl || ''
+                      }
+                      onChange={(url) =>
+                        updateCard(
+                          idx,
+                          'imageUrl',
+                          url
+                        )
+                      }
+                      onMetadataChange={(
+                        meta
+                      ) =>
+                        updateCard(
+                          idx,
+                          'imageMetadata',
+                          meta || {}
+                        )
+                      }
+                      onRemove={async () => {
+                        const driveFileId =
+                          cardImageMetadata?.driveFileId;
+
+                        if (driveFileId) {
+                          await deleteMedia(
+                            driveFileId
+                          );
+                        }
+                      }}
+                      mediaType="image"
+                      accept={IMAGE_ACCEPT}
+                    />
+                  </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         Display Order
                       </label>
+
                       <input
                         type="number"
                         value={cardOrder}
-                        onChange={(e) => updateCard(idx, 'order', Number(e.target.value))}
+                        onChange={(e) =>
+                          updateCard(
+                            idx,
+                            'order',
+                            Number(
+                              e.target.value
+                            )
+                          )
+                        }
                         min="1"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
                       />
                     </div>
+
                     <div className="flex items-end">
                       <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={cardEnabled}
-                          onChange={(e) => {
-                            updateCard(idx, 'enabled', e.target.checked);
-                          }}
+                          checked={
+                            cardEnabled
+                          }
+                          onChange={(e) =>
+                            updateCard(
+                              idx,
+                              'enabled',
+                              e.target.checked
+                            )
+                          }
                           className="w-4 h-4 text-gold focus:ring-gold border-gray-300 rounded"
                         />
+
                         Enabled
                       </label>
                     </div>
@@ -616,293 +1198,649 @@ const PriceCardsEditor = ({ data, onChange }) => {
   );
 };
 
+/* =========================================================
+   HOMEPAGE
+========================================================= */
+
 const Homepage = () => {
-  const [sections, setSections] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [sections, setSections] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [error, setError] =
+    useState('');
+
+  const [success, setSuccess] =
+    useState('');
 
   useEffect(() => {
-    const fetchHomepage = async () => {
-      try {
-        const res = await adminApi.get('/homepage');
-        if (res.data.success) {
-          setSections(toArray(res.data, ['sections']));
+    const fetchHomepage =
+      async () => {
+        try {
+          const res =
+            await adminApi.get(
+              '/homepage'
+            );
+
+          if (res.data.success) {
+            setSections(
+              toArray(res.data, [
+                'sections',
+              ])
+            );
+          }
+        } catch (err) {
+          console.error(
+            'Failed to fetch homepage:',
+            err
+          );
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error('Failed to fetch homepage:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
+
     fetchHomepage();
   }, []);
 
   const getSectionData = (id) => {
-    const section = sections.find((s) => s.key === id);
+    const section = sections.find(
+      (s) => s.key === id
+    );
+
     return section?.data || {};
   };
 
   const isSectionEnabled = (id) => {
-    const section = sections.find((s) => s.key === id);
-    return section ? section.enabled : true;
+    const section = sections.find(
+      (s) => s.key === id
+    );
+
+    return section
+      ? section.enabled
+      : true;
   };
 
-  const updateField = (sectionId, fieldKey, value) => {
+  const updateField = (
+    sectionId,
+    fieldKey,
+    value
+  ) => {
     setSections((prev) =>
       prev.map((s) => {
         if (s.key === sectionId) {
-          const currentData = s.data || {};
-          const nextValue = typeof value === 'function' ? value(currentData[fieldKey]) : value;
-          return { ...s, data: { ...currentData, [fieldKey]: nextValue } };
+          const currentData =
+            s.data || {};
+
+          const nextValue =
+            typeof value === 'function'
+              ? value(
+                  currentData[
+                    fieldKey
+                  ]
+                )
+              : value;
+
+          return {
+            ...s,
+            data: {
+              ...currentData,
+              [fieldKey]:
+                nextValue,
+            },
+          };
         }
+
         return s;
       })
     );
   };
 
-  const toggleSection = (sectionId) => {
+  const toggleSection = (
+    sectionId
+  ) => {
     setSections((prev) =>
       prev.map((s) =>
-        s.key === sectionId ? { ...s, enabled: !s.enabled } : s
+        s.key === sectionId
+          ? {
+              ...s,
+              enabled:
+                !s.enabled,
+            }
+          : s
       )
     );
   };
 
-  const ensureAllSections = () => {
-    const existingIds = sections.map((s) => s.key);
-    const missing = SECTIONS.filter((s) => !existingIds.includes(s.id));
-    if (missing.length > 0) {
-      const newSections = [
-        ...sections,
-        ...missing.map((s) => ({
-          key: s.id,
-          enabled: true,
-          data: {},
-        })),
-      ];
-      setSections(newSections);
-      return newSections;
-    }
-    return sections;
-  };
+  const ensureAllSections =
+    () => {
+      const existingIds =
+        sections.map(
+          (s) => s.key
+        );
+
+      const missing =
+        SECTIONS.filter(
+          (s) =>
+            !existingIds.includes(
+              s.id
+            )
+        );
+
+      if (missing.length > 0) {
+        const newSections = [
+          ...sections,
+          ...missing.map(
+            (s) => ({
+              key: s.id,
+              enabled: true,
+              data: {},
+            })
+          ),
+        ];
+
+        setSections(newSections);
+
+        return newSections;
+      }
+
+      return sections;
+    };
 
   const handleSave = async () => {
-    const allSections = ensureAllSections();
-    const heroSection = allSections.find((s) => s.key === 'hero');
+    const allSections =
+      ensureAllSections();
+
+    const heroSection =
+      allSections.find(
+        (s) => s.key === 'hero'
+      );
+
     console.log(
       '[Admin] before save heroImages:',
-      heroSection?.data?.heroImages?.map((s) => s.imageUrl)
+      heroSection?.data?.heroImages?.map(
+        (s) => s.imageUrl
+      )
     );
+
     setSaving(true);
     setError('');
     setSuccess('');
+
     try {
-      const res = await adminApi.put('/homepage', { sections: allSections });
+      const res =
+        await adminApi.put(
+          '/homepage',
+          {
+            sections:
+              allSections,
+          }
+        );
+
       if (res.data.success) {
-        setSections(toArray(res.data, ['sections']));
-        setSuccess('Homepage updated successfully!');
-        setTimeout(() => setSuccess(''), 3000);
+        setSections(
+          toArray(res.data, [
+            'sections',
+          ])
+        );
+
+        setSuccess(
+          'Homepage updated successfully!'
+        );
+
+        setTimeout(() => {
+          setSuccess('');
+        }, 3000);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save');
+      setError(
+        err.response?.data
+          ?.message ||
+          'Failed to save'
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p>Loading homepage config...</p>;
+  if (loading) {
+    return (
+      <p>
+        Loading homepage config...
+      </p>
+    );
+  }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold">Homepage Content Management</h1>
+        <h1 className="text-2xl font-heading font-bold">
+          Homepage Content
+          Management
+        </h1>
+
         <div className="flex gap-3">
-          {error && <span className="text-sm text-red-600">{error}</span>}
-          {success && <span className="text-sm text-green-600">{success}</span>}
+          {error && (
+            <span className="text-sm text-red-600">
+              {error}
+            </span>
+          )}
+
+          {success && (
+            <span className="text-sm text-green-600">
+              {success}
+            </span>
+          )}
+
           <button
             onClick={handleSave}
             disabled={saving}
             className="bg-charcoal text-ivory px-4 py-2 rounded-md font-medium hover:bg-deep-brown flex items-center gap-2 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Saving...' : 'Save All'}
+
+            {saving
+              ? 'Saving...'
+              : 'Save All'}
           </button>
         </div>
       </div>
 
       <div className="space-y-6">
-        {SECTIONS.map((section) => {
-          const Icon = section.icon;
-          const enabled = isSectionEnabled(section.id);
-          const data = getSectionData(section.id);
+        {SECTIONS.map(
+          (section) => {
+            const Icon =
+              section.icon;
 
-          return (
-            <div
-              key={section.id}
-              className={`bg-white rounded-lg border border-gray-200 p-6 ${
-                !enabled ? 'opacity-60' : ''
-              }`}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-charcoal" />
-                  <h2 className="text-lg font-semibold">{section.name}</h2>
+            const enabled =
+              isSectionEnabled(
+                section.id
+              );
+
+            const data =
+              getSectionData(
+                section.id
+              );
+
+            return (
+              <div
+                key={section.id}
+                className={`bg-white rounded-lg border border-gray-200 p-6 ${
+                  !enabled
+                    ? 'opacity-60'
+                    : ''
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-5 h-5 text-charcoal" />
+
+                    <h2 className="text-lg font-semibold">
+                      {section.name}
+                    </h2>
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      toggleSection(
+                        section.id
+                      )
+                    }
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      enabled
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {enabled
+                      ? 'Enabled'
+                      : 'Disabled'}
+                  </button>
                 </div>
-                <button
-                  onClick={() => toggleSection(section.id)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    enabled
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
-                >
-                  {enabled ? 'Enabled' : 'Disabled'}
-                </button>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {section.customRender === 'hero-slides' ? (
-                  <HeroSlidesEditor
-                    data={data}
-                    onChange={(field, value) => updateField(section.id, field, value)}
-                    globalDefaults={{
-                      heading: data.heading || 'Welcome to Loom & Luster',
-                      description: data.description || '',
-                      ctaText: data.ctaText || 'Shop Now',
-                      ctaLink: data.ctaLink || '/shop',
-                    }}
-                  />
-                ) : null}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {section.customRender ===
+                    'hero-slides' ? (
+                    <HeroSlidesEditor
+                      data={data}
+                      onChange={(
+                        field,
+                        value
+                      ) =>
+                        updateField(
+                          section.id,
+                          field,
+                          value
+                        )
+                      }
+                      globalDefaults={{
+                        heading:
+                          data.heading ||
+                          'Welcome to Loom & Luster',
+                        description:
+                          data.description ||
+                          '',
+                        ctaText:
+                          data.ctaText ||
+                          'Shop Now',
+                        ctaLink:
+                          data.ctaLink ||
+                          '/shop',
+                      }}
+                    />
+                  ) : null}
 
-                {section.customRender === 'price-cards' ? (
-                  <PriceCardsEditor
-                    data={data}
-                    onChange={(field, value) => updateField(section.id, field, value)}
-                  />
-                ) : null}
+                  {section.customRender ===
+                    'price-cards' ? (
+                    <PriceCardsEditor
+                      data={data}
+                      onChange={(
+                        field,
+                        value
+                      ) =>
+                        updateField(
+                          section.id,
+                          field,
+                          value
+                        )
+                      }
+                    />
+                  ) : null}
 
-                {section.fields.map((field) => {
-                  if (section.customRender === 'hero-slides' && ['heroImages'].includes(field.key)) {
-                    return null;
-                  }
-                  if (section.customRender === 'price-cards' && ['cards'].includes(field.key)) {
-                    return null;
-                  }
+                  {section.fields.map(
+                    (field) => {
+                      if (
+                        section.customRender ===
+                          'hero-slides' &&
+                        ['heroImages'].includes(
+                          field.key
+                        )
+                      ) {
+                        return null;
+                      }
 
-                  const rawValue = data[field.key];
+                      if (
+                        section.customRender ===
+                          'price-cards' &&
+                        ['cards'].includes(
+                          field.key
+                        )
+                      ) {
+                        return null;
+                      }
 
-                  if (field.type === 'array') {
-                    const arrValue = Array.isArray(rawValue) ? rawValue : rawValue ? [rawValue] : [];
+                      const rawValue =
+                        data[
+                          field.key
+                        ];
 
-                    return (
-                      <div key={field.key} className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          {field.label}
-                        </label>
-                        <div className="space-y-2">
-                          {arrValue.map((item, idx) => (
-                            <div key={idx} className="flex items-center gap-2">
-                              <input
-                                type="text"
-                                value={item || ''}
-                                onChange={(e) => {
-                                  const newArr = [...arrValue];
-                                  newArr[idx] = e.target.value;
-                                  updateField(section.id, field.key, newArr);
-                                }}
-                                placeholder={field.placeholder}
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
-                              />
+                      if (
+                        field.type ===
+                        'array'
+                      ) {
+                        const arrValue =
+                          Array.isArray(
+                            rawValue
+                          )
+                            ? rawValue
+                            : rawValue
+                            ? [
+                                rawValue,
+                              ]
+                            : [];
+
+                        return (
+                          <div
+                            key={
+                              field.key
+                            }
+                            className="md:col-span-2"
+                          >
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              {
+                                field.label
+                              }
+                            </label>
+
+                            <div className="space-y-2">
+                              {arrValue.map(
+                                (
+                                  item,
+                                  idx
+                                ) => (
+                                  <div
+                                    key={
+                                      idx
+                                    }
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="text"
+                                      value={
+                                        item ||
+                                        ''
+                                      }
+                                      onChange={(
+                                        e
+                                      ) => {
+                                        const newArr =
+                                          [
+                                            ...arrValue,
+                                          ];
+
+                                        newArr[
+                                          idx
+                                        ] =
+                                          e.target.value;
+
+                                        updateField(
+                                          section.id,
+                                          field.key,
+                                          newArr
+                                        );
+                                      }}
+                                      placeholder={
+                                        field.placeholder
+                                      }
+                                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm"
+                                    />
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        updateField(
+                                          section.id,
+                                          field.key,
+                                          arrValue.filter(
+                                            (
+                                              _,
+                                              i
+                                            ) =>
+                                              i !==
+                                              idx
+                                          )
+                                        )
+                                      }
+                                      className="text-red-500 hover:text-red-700 text-xs px-2 py-1"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                )
+                              )}
+
                               <button
                                 type="button"
-                                onClick={() => {
+                                onClick={() =>
                                   updateField(
                                     section.id,
                                     field.key,
-                                    arrValue.filter((_, i) => i !== idx)
-                                  );
-                                }}
-                                className="text-red-500 hover:text-red-700 text-xs px-2 py-1"
+                                    [
+                                      ...arrValue,
+                                      '',
+                                    ]
+                                  )
+                                }
+                                className="text-sm text-gold hover:text-burgundy"
                               >
-                                Remove
+                                + Add Another
+                                Image
                               </button>
                             </div>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() => updateField(section.id, field.key, [...arrValue, ''])}
-                            className="text-sm text-gold hover:text-burgundy"
-                          >
-                            + Add Another Image
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  }
+                          </div>
+                        );
+                      }
 
-                  const value = rawValue ?? '';
-                  const commonProps = {
-                    value: field.type === 'number' ? (value || '') : value,
-                    onChange: (e) =>
-                      updateField(
-                        section.id,
-                        field.key,
-                        field.type === 'number'
-                          ? Number(e.target.value)
-                          : e.target.value
-                      ),
-                    className:
-                      'w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm',
-                  };
+                      const value =
+                        rawValue ??
+                        '';
 
-                  return (
-                    <div key={field.key}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {field.label}
-                      </label>
-                      {field.type === 'textarea' ? (
-                        <textarea
-                          {...commonProps}
-                          rows={3}
-                          placeholder={field.placeholder}
-                        />
-                      ) : (
-                        <input
-                          {...commonProps}
-                          type={field.type === 'number' ? 'number' : 'text'}
-                          placeholder={field.placeholder}
-                        />
-                      )}
-                      {field.ui === 'image-url' && (
-                        <>
-                          <ImageUploadField
-                            value={rawValue}
-                            onChange={(url) => updateField(section.id, field.key, url)}
-                            onMetadataChange={(meta) => updateField(section.id, `${field.key}Metadata`, meta || {})}
-                            onRemove={async () => {
-                              const meta = data[`${field.key}Metadata`] || {};
-                              const driveFileId = meta?.driveFileId;
-                              if (driveFileId) {
-                                await deleteMedia(driveFileId);
+                      const commonProps =
+                        {
+                          value:
+                            field.type ===
+                            'number'
+                              ? value ||
+                                ''
+                              : value,
+
+                          onChange: (
+                            e
+                          ) =>
+                            updateField(
+                              section.id,
+                              field.key,
+                              field.type ===
+                                'number'
+                                ? Number(
+                                    e.target
+                                      .value
+                                  )
+                                : e.target
+                                    .value
+                            ),
+
+                          className:
+                            'w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent text-sm',
+                        };
+
+                      return (
+                        <div
+                          key={
+                            field.key
+                          }
+                        >
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            {
+                              field.label
+                            }
+                          </label>
+
+                          {field.type ===
+                          'textarea' ? (
+                            <textarea
+                              {...commonProps}
+                              rows={3}
+                              placeholder={
+                                field.placeholder
                               }
-                            }}
-                          />
-                          <ImageUrlPreview
-                            url={rawValue ? (typeof rawValue === 'string' ? rawValue : '') : ''}
-                            alt={field.label}
-                            className="max-w-[320px]"
-                          />
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
+                            />
+                          ) : (
+                            <input
+                              {...commonProps}
+                              type={
+                                field.type ===
+                                'number'
+                                  ? 'number'
+                                  : 'text'
+                              }
+                              placeholder={
+                                field.placeholder
+                              }
+                            />
+                          )}
+
+                          {field.ui ===
+                            'image-url' && (
+                            <>
+                              {/* IMAGE UPLOAD ONLY
+                                  Google Drive functionality unchanged */}
+                              <ImageUploadField
+                                value={
+                                  rawValue
+                                }
+                                onChange={(
+                                  url
+                                ) =>
+                                  updateField(
+                                    section.id,
+                                    field.key,
+                                    url
+                                  )
+                                }
+                                onMetadataChange={(
+                                  meta
+                                ) =>
+                                  updateField(
+                                    section.id,
+                                    `${field.key}Metadata`,
+                                    meta ||
+                                      {}
+                                  )
+                                }
+                                onRemove={async () => {
+                                  const meta =
+                                    data[
+                                      `${field.key}Metadata`
+                                    ] ||
+                                    {};
+
+                                  const driveFileId =
+                                    meta?.driveFileId;
+
+                                  if (
+                                    driveFileId
+                                  ) {
+                                    await deleteMedia(
+                                      driveFileId
+                                    );
+                                  }
+                                }}
+                                mediaType="image"
+                                accept={
+                                  IMAGE_ACCEPT
+                                }
+                              />
+
+                              <ImageUrlPreview
+                                url={
+                                  rawValue
+                                    ? typeof rawValue ===
+                                      'string'
+                                      ? rawValue
+                                      : ''
+                                    : ''
+                                }
+                                alt={
+                                  field.label
+                                }
+                                className="max-w-[320px]"
+                              />
+                            </>
+                          )}
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          }
+        )}
       </div>
     </div>
   );
