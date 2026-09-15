@@ -34,7 +34,7 @@ const Newsletter = ({
     setLoading(true);
 
     try {
-      const response = await fetch('/api/newsletter/subscribe', {
+      const response = await fetch( 'https://botique-backend-k8f1.onrender.com/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
